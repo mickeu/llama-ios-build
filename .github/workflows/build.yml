@@ -23,6 +23,16 @@ jobs:
           ref: ${{ github.event.inputs.llama_ref }}
           fetch-depth: 1
 
+      - name: Patch out hardcoded install (iOS cross-build)
+        run: |
+          python3 - <<'PY'
+          p = "tools/server/CMakeLists.txt"
+          s = open(p).read()
+          s = s.replace("install(TARGETS ${TARGET} RUNTIME)", "#install(TARGETS ${TARGET} RUNTIME) [patched-ios]")
+          open(p, "w").write(s)
+          print("patched" if "#install(TARGETS" in s else "FAILED")
+          PY
+
       - name: Install deps
         run: brew install cmake ninja
 
