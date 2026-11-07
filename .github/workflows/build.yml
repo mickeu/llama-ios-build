@@ -33,10 +33,24 @@ jobs:
           print("patched" if "#install(TARGETS" in s else "FAILED")
           PY
 
+      - name: Force-remove Metal backend sources (CPU-only build)
+        run: |
+          # 确保 iOS 上不链接 Metal/MetalKit
+          rm -f ggml/src/ggml-metal* 2>/dev/null || true
+          python3 - <<'PY'
+          import re, glob, os
+          for f in glob.glob("ggml/src/CMakeLists.txt"):
+              s = open(f).read()
+              s = re.sub(r"\s*ggml-metal\.cpp", "", s)
+              s = re.sub(r"\s*ggml-metal\.h", "", s)
+              open(f, "w").write(s)
+          print("metal sources removed from ggml cmake")
+          PY
+
       - name: Install deps
         run: brew install cmake ninja
 
-      - name: Configure (iOS arm64, static, noMetal-needed-server)
+      - name: Configure (iOS arm64, static, CPU-only no Metal)
         run: |
           mkdir -p build-ios
           cmake -G Ninja -B build-ios -S . \
@@ -48,11 +62,13 @@ jobs:
             -DLLAMA_BUILD_EXAMPLES=OFF \
             -DLLAMA_BUILD_TESTS=OFF \
             -DLLAMA_METAL=OFF \
+            -DGGML_METAL=OFF \
             -DLLAMA_ACCELERATE=OFF \
             -DLLAMA_BLAS=OFF \
             -DLLAMA_CURL=OFF \
             -DLLAMA_INSTALL=OFF \
             -DBUILD_SHARED_LIBS=OFF \
+            -DCMAKE_DISABLE_FIND_PACKAGE_Metal=ON \
             -DCMAKE_BUILD_TYPE=Release
 
       - name: Build llama-server
