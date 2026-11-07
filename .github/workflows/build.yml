@@ -66,4 +66,4 @@ jobs:
           name: llama-server-ios
           path: ${{ env.ART }}
           retention-days: 30
-EOF
+
