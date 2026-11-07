@@ -41,6 +41,7 @@ jobs:
             -DLLAMA_ACCELERATE=OFF \
             -DLLAMA_BLAS=OFF \
             -DLLAMA_CURL=OFF \
+            -DLLAMA_INSTALL=OFF \
             -DBUILD_SHARED_LIBS=OFF \
             -DCMAKE_BUILD_TYPE=Release
 
