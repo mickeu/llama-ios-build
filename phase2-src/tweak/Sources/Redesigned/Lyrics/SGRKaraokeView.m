@@ -765,7 +765,7 @@ static const NSUInteger kLinesPerFrame = 4;
     } completion:nil];
     [UIView animateWithDuration:0.5 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
         for (SGRKaraokeWordView *word in self->_words) word.lit.alpha = 0;
-    } completion:^(BOOL finished) {
+    } completion:^(__unused BOOL finished) {
         if (generation != self->_generation) return;
         for (SGRKaraokeWordView *word in self->_words) {
             [word fillTo:-CGFLOAT_MAX];
@@ -816,7 +816,7 @@ static const NSUInteger kLinesPerFrame = 4;
         _bubble.alpha = kBubbleAlpha;
         _bubble.frame = CGRectMake(x, CGRectGetMidY(word) - kBubbleSide / 2, kBubbleSide, kBubbleSide);
         _bubble.isAccessibilityElement = YES;
-        _bubble.accessibilityLabel = @"Meaning from the artist";
+        _bubble.accessibilityLabel = @"艺人释义";
         [self addSubview:_bubble];
         return;
     }
@@ -1482,21 +1482,21 @@ typedef struct {
         _extras.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
         _extras.showsMenuAsPrimaryAction = YES;
         _extras.preferredMenuElementOrder = UIContextMenuConfigurationElementOrderFixed;
-        _extras.accessibilityLabel = @"Pronunciation and translation";
+        _extras.accessibilityLabel = @"发音与翻译";
         [self addSubview:_extras];
     }
     NSMutableArray<UIMenuElement *> *items = [NSMutableArray array];
     if (_hasSpoken) {
         BOOL on = SGFlag(SGRKeyLyricsPronunciation, NO);
-        [items addObject:[UIAction actionWithTitle:on ? @"Hide Pronunciation" : @"Show Pronunciation"
+        [items addObject:[UIAction actionWithTitle:on ? @"隐藏发音" : @"显示发音"
                                              image:[UIImage systemImageNamed:@"character.phonetic"] identifier:nil
-                                           handler:^(UIAction *action) { SGRSetLyricsTextShown(SGRLyricsTextPronunciation, !on); }]];
+                                           handler:^(__unused UIAction *action) { SGRSetLyricsTextShown(SGRLyricsTextPronunciation, !on); }]];
     }
     if (_hasTranslation) {
         BOOL on = SGFlag(SGRKeyLyricsTranslation, NO);
-        [items addObject:[UIAction actionWithTitle:on ? @"Hide Translation" : @"Show Translation"
+        [items addObject:[UIAction actionWithTitle:on ? @"隐藏翻译" : @"显示翻译"
                                              image:[UIImage systemImageNamed:@"character.bubble"] identifier:nil
-                                           handler:^(UIAction *action) { SGRSetLyricsTextShown(SGRLyricsTextTranslation, !on); }]];
+                                           handler:^(__unused UIAction *action) { SGRSetLyricsTextShown(SGRLyricsTextTranslation, !on); }]];
     }
     _extras.menu = [UIMenu menuWithChildren:items];
     _extras.hidden = NO;
@@ -1664,7 +1664,7 @@ typedef struct {
 
 - (void)creditTo:(SGLyricsCredit *)credit {
     _credited = credit;
-    NSString *text = credit.text.length && (_crediting || credit.required) ? [NSString stringWithFormat:@"Lyrics from %@", credit.text] : nil;
+    NSString *text = credit.text.length && (_crediting || credit.required) ? [NSString stringWithFormat:@"歌词来自 %@", credit.text] : nil;
     if (text == _credit.text || [text isEqualToString:_credit.text]) return;
     _credit.text = text;
     _credit.hidden = !_showing || !text.length;

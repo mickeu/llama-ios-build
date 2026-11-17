@@ -207,7 +207,7 @@ static void placeTick(UISlider *slider) {
     _icon = [[UIImageView alloc] initWithImage:paintedSymbol(@"slider.horizontal.3", 20, UIImageSymbolWeightRegular, secondary())];
     _icon.contentMode = UIViewContentModeCenter;
     _title = makeLabel(font(UIFontTextStyleBody, UIFontWeightRegular, UIContentSizeCategoryExtraLarge), primary());
-    _title.text = @"Speed and pitch";
+    _title.text = @"速度与音调";
     _summary = makeLabel(monospacedDigits(font(UIFontTextStyleSubheadline, UIFontWeightRegular, UIContentSizeCategoryExtraLarge)), secondary());
     _summary.textAlignment = NSTextAlignmentRight;
     _chevron = [[UIImageView alloc] initWithImage:paintedSymbol(@"chevron.down", 13, UIImageSymbolWeightSemibold, secondary())];
@@ -221,24 +221,24 @@ static void placeTick(UISlider *slider) {
     [self addSubview:_panel];
     UIFont *nameFont = font(UIFontTextStyleSubheadline, UIFontWeightRegular, UIContentSizeCategoryExtraLarge);
     _speedName = makeLabel(nameFont, secondary());
-    _speedName.text = @"Speed";
+    _speedName.text = @"速度";
     _pitchName = makeLabel(nameFont, secondary());
-    _pitchName.text = @"Pitch";
+    _pitchName.text = @"音调";
     _speedValue = [self valueButton:@selector(resetSpeed)];
     _pitchValue = [self valueButton:@selector(resetPitch)];
     _speed = [self slider:kMinSpeed max:kMaxSpeed normal:1 minImage:@"tortoise.fill" maxImage:@"hare.fill"];
-    _speed.accessibilityLabel = @"Speed";
+    _speed.accessibilityLabel = @"速度";
     _pitch = [self slider:-kMaxPitch max:kMaxPitch normal:0 minImage:@"arrow.down" maxImage:@"arrow.up"];
-    _pitch.accessibilityLabel = @"Pitch";
+    _pitch.accessibilityLabel = @"音调";
     _followName = makeLabel(nameFont, secondary());
-    _followName.text = @"Pitch follows speed";
+    _followName.text = @"音调跟随速度";
     _followName.adjustsFontSizeToFitWidth = YES;
     _followName.minimumScaleFactor = 0.8;
     _followName.isAccessibilityElement = NO;
     _follow = [UISwitch new];
     _follow.onTintColor = SGGreen();
-    _follow.accessibilityLabel = @"Pitch follows speed";
-    _follow.accessibilityHint = @"Faster plays higher, as a record does";
+    _follow.accessibilityLabel = @"音调跟随速度";
+    _follow.accessibilityHint = @"更快则音调更高，像唱片一样";
     [_follow addTarget:self action:@selector(followChanged) forControlEvents:UIControlEventValueChanged];
     for (UIView *view in @[_speedName, _speedValue, _speed, _followName, _follow, _pitchName, _pitchValue, _pitch]) [_panel addSubview:view];
 
@@ -350,13 +350,13 @@ static NSString *summaryText(float speed, BOOL speedShown, float pitch, BOOL fol
     _pitchValue.enabled = pitchAvailable && _shownPitch != 0;
     BOOL follows = SGPlayerPitchFollowsSpeed();
     NSString *followed = follows ? followedPitchText(_shownSpeed) : nil;
-    _speed.accessibilityValue = !speedAllowed ? @"不可用" : followed ? [NSString stringWithFormat:@"%@, pitch %@", speedText(_shownSpeed), followed] : speedText(_shownSpeed);
+    _speed.accessibilityValue = !speedAllowed ? @"不可用" : followed ? [NSString stringWithFormat:@"%@，音调 %@", speedText(_shownSpeed), followed] : speedText(_shownSpeed);
     _pitch.accessibilityValue = _shownPitch == 0 ? @"原始音调" : [NSString stringWithFormat:@"%.0f 个半音%@", fabsf(_shownPitch), _shownPitch > 0 ? @"升" : @"降"];
 
     NSString *summary = summaryText(_shownSpeed, YES, _shownPitch, follows);
     _summary.text = sg_open ? nil : summary;
-    _row.accessibilityLabel = summary ? [@"Speed and pitch, " stringByAppendingString:[summary stringByReplacingOccurrencesOfString:@"  " withString:@", "]] : @"Speed and pitch";
-    _row.accessibilityValue = sg_open ? @"Expanded" : @"Collapsed";
+    _row.accessibilityLabel = summary ? [@"Speed and pitch, " stringByAppendingString:[summary stringByReplacingOccurrencesOfString:@"  " withString:@", "]] : @"速度与音调";
+    _row.accessibilityValue = sg_open ? @"已展开" : @"已折叠";
     _chevron.transform = sg_open ? CGAffineTransformMakeRotation(M_PI) : CGAffineTransformIdentity;
     BOOL showsPanel = sg_open || self.panelOnly;
     _panel.alpha = showsPanel ? 1 : 0;

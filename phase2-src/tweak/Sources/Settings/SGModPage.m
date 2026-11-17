@@ -200,7 +200,7 @@ NSArray<SGModRow *> *SGChoiceListRows(NSString *key, NSArray<NSString *> *choice
         return index >= 0 && index < (NSInteger)choices.count ? index : fallback;
     };
     NSMutableArray<SGModRow *> *rows = [NSMutableArray arrayWithCapacity:choices.count];
-    [choices enumerateObjectsUsingBlock:^(NSString *name, NSUInteger i, BOOL *stop) {
+    [choices enumerateObjectsUsingBlock:^(NSString *name, NSUInteger i, __unused BOOL *stop) {
         NSInteger index = (NSInteger)i;
         SGModRow *row = SGActionRow(name, i < notes.count ? notes[i] : nil, ^{
             if (current() == index) return;
@@ -240,7 +240,7 @@ SGModRow *SGLinkRow(NSString *title, NSString *subtitle, NSString *url) {
 
 static void sayProblem(NSString *title, NSString *problem) {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:problem preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"好" style:UIAlertActionStyleCancel handler:nil]];
     [SGTopController() presentViewController:alert animated:YES completion:nil];
 }
 
@@ -257,13 +257,13 @@ SGModRow *SGTextRow(NSString *title, NSString *prompt, NSString *placeholder, NS
             field.smartQuotesType = UITextSmartQuotesTypeNo;
             field.clearButtonMode = UITextFieldViewModeWhileEditing;
         }];
-        [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+        [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
         if (value()) {
-            [alert addAction:[UIAlertAction actionWithTitle:@"Remove" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+            [alert addAction:[UIAlertAction actionWithTitle:@"移除" style:UIAlertActionStyleDestructive handler:^(__unused UIAlertAction *action) {
                 set(@"");
             }]];
         }
-        UIAlertAction *save = [UIAlertAction actionWithTitle:@"Save" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        UIAlertAction *save = [UIAlertAction actionWithTitle:@"保存" style:UIAlertActionStyleDefault handler:^(__unused UIAlertAction *action) {
             NSString *text = [alert.textFields.firstObject.text stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
             if (!text.length) return;
             NSString *problem = set(text);
@@ -601,7 +601,7 @@ static void showProgress(UITableViewCell *cell, SGModRow *row, BOOL animated) {
     if ([next isEqualToArray:_shown]) return NO;
     NSMutableArray<NSIndexPath *> *gone = [NSMutableArray array], *coming = [NSMutableArray array], *arrived = [NSMutableArray array];
     NSMutableIndexSet *redrawn = [NSMutableIndexSet indexSet];
-    [_sections enumerateObjectsUsingBlock:^(SGModSection *s, NSUInteger section, BOOL *stop) {
+    [_sections enumerateObjectsUsingBlock:^(SGModSection *s, NSUInteger section, __unused BOOL *stop) {
         NSArray<SGModRow *> *before = self->_shown[section], *after = next[section];
         // A section emptying or filling takes its header and footer along, which only a reload redraws.
         if (s.rows.count && !before.count != !after.count) {
@@ -609,10 +609,10 @@ static void showProgress(UITableViewCell *cell, SGModRow *row, BOOL animated) {
             for (NSUInteger i = 0; i < after.count; i++) [arrived addObject:[NSIndexPath indexPathForRow:(NSInteger)i inSection:(NSInteger)section]];
             return;
         }
-        [before enumerateObjectsUsingBlock:^(SGModRow *row, NSUInteger i, BOOL *stop) {
+        [before enumerateObjectsUsingBlock:^(SGModRow *row, NSUInteger i, __unused BOOL *stop) {
             if (![after containsObject:row]) [gone addObject:[NSIndexPath indexPathForRow:(NSInteger)i inSection:(NSInteger)section]];
         }];
-        [after enumerateObjectsUsingBlock:^(SGModRow *row, NSUInteger i, BOOL *stop) {
+        [after enumerateObjectsUsingBlock:^(SGModRow *row, NSUInteger i, __unused BOOL *stop) {
             if (![before containsObject:row]) [coming addObject:[NSIndexPath indexPathForRow:(NSInteger)i inSection:(NSInteger)section]];
         }];
     }];
@@ -623,7 +623,7 @@ static void showProgress(UITableViewCell *cell, SGModRow *row, BOOL animated) {
         [table deleteRowsAtIndexPaths:gone withRowAnimation:UITableViewRowAnimationFade];
         [table insertRowsAtIndexPaths:coming withRowAnimation:UITableViewRowAnimationFade];
         [table reloadSections:redrawn withRowAnimation:UITableViewRowAnimationFade];
-    } completion:^(BOOL finished) {
+    } completion:^(__unused BOOL finished) {
         if (arrived.count) {
             CGRect rows = CGRectNull;
             for (NSIndexPath *path in arrived) rows = CGRectUnion(rows, [table rectForRowAtIndexPath:path]);
@@ -817,7 +817,7 @@ static void showProgress(UITableViewCell *cell, SGModRow *row, BOOL animated) {
     UIImageSymbolConfiguration *symbol = [UIImageSymbolConfiguration configurationWithPointSize:17 weight:UIImageSymbolWeightRegular];
     [info setImage:[UIImage systemImageNamed:@"info.circle" withConfiguration:symbol] forState:UIControlStateNormal];
     info.tintColor = SGGrey();
-    info.accessibilityLabel = @"About this switch";
+    info.accessibilityLabel = @"关于此开关";
     [info addTarget:self action:@selector(infoTapped:) forControlEvents:UIControlEventTouchUpInside];
     [toggle sizeToFit];
     CGFloat side = 30, gap = 8, height = MAX(side, toggle.bounds.size.height);
@@ -834,7 +834,7 @@ static void showProgress(UITableViewCell *cell, SGModRow *row, BOOL animated) {
     if (!path) return;
     SGModRow *row = [self rowAt:path];
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:row.title message:row.info preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"好" style:UIAlertActionStyleCancel handler:nil]];
     [self presentViewController:alert animated:YES completion:nil];
 }
 
@@ -861,10 +861,10 @@ static void showProgress(UITableViewCell *cell, SGModRow *row, BOOL animated) {
 // A locked row will not move, and nothing on it says why.
 - (void)explainLock {
     UIAlertController *alert = [UIAlertController
-        alertControllerWithTitle:@"Overridden by another setting"
-                         message:@"Another switch is forcing this flag, so the row shows what it forces instead of taking a value of its own."
+        alertControllerWithTitle:@"已被其他设置覆盖"
+                         message:@"另一个开关正在强制此项，因此此行显示的是其强制结果，不能单独设置。"
                   preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"好" style:UIAlertActionStyleCancel handler:nil]];
     [self presentViewController:alert animated:YES completion:nil];
 }
 
@@ -872,10 +872,10 @@ static void showProgress(UITableViewCell *cell, SGModRow *row, BOOL animated) {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:[row.title stringByAppendingString:@" is unstable"]
                                                                   message:row.warning
                                                            preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"Open GitHub" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    [alert addAction:[UIAlertAction actionWithTitle:@"打开 GitHub" style:UIAlertActionStyleDefault handler:^(__unused UIAlertAction *action) {
         SGOpenURL(SGRepoURL);
     }]];
-    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"好" style:UIAlertActionStyleCancel handler:nil]];
     [self presentViewController:alert animated:YES completion:nil];
 }
 

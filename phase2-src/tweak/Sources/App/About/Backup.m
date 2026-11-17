@@ -89,7 +89,7 @@ static void importSettings(NSDictionary *settings) {
         return;
     }
     NSString *mod = [file[@"mod"] isKindOfClass:NSString.class] ? file[@"mod"] : @"unknown";
-    NSString *message = [NSString stringWithFormat:@"Your settings are replaced by the file's, exported from version %@. Anything it does not have goes back to its default, and Spotify restarts.", mod];
+    NSString *message = [NSString stringWithFormat:@"当前设置将替换为该文件中的设置（导出版本：%@）。文件中未包含的项目会恢复默认值，随后 Spotify 将重启。", mod];
     showAlert(@"导入设置？", message, [UIAlertAction actionWithTitle:@"导入并重启" style:UIAlertActionStyleDestructive handler:^(__unused UIAlertAction *action) {
         importSettings(settings);
     }]);

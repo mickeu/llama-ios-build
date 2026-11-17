@@ -66,7 +66,7 @@ typedef NS_ENUM(NSInteger, SGArtistSection) {
     UITableViewCell *cell = SGDequeueCell(table, @"artist");
     switch (path.section) {
         case SGArtistSectionSwitch: {
-            SGFillCell(cell, @"Skip blocked artists", nil, nil, nil);
+            SGFillCell(cell, @"跳过已屏蔽艺人", nil, nil, nil);
             UISwitch *toggle = [UISwitch new];
             toggle.onTintColor = SGGreen();
             toggle.on = SGFlag(SGKeyArtistBlock, NO);
@@ -76,7 +76,7 @@ typedef NS_ENUM(NSInteger, SGArtistSection) {
         }
         case SGArtistSectionMode: {
             BOOL featured = path.row == 1;
-            SGFillCell(cell, featured ? @"Main or featured" : @"The main artist",
+            SGFillCell(cell, featured ? @"主唱或参与" : @"主唱",
                        featured ? @"曲目中的任意署名" : @"曲目中的首位艺人", nil, nil);
             cell.selectionStyle = UITableViewCellSelectionStyleDefault;
             if (featured == SGFlag(SGKeyArtistBlockFeatured, NO)) {
@@ -87,12 +87,12 @@ typedef NS_ENUM(NSInteger, SGArtistSection) {
             break;
         }
         case SGArtistSectionAdd:
-            SGFillCell(cell, @"Block from what's playing…", nil, nil, @"person.crop.circle.badge.xmark");
+            SGFillCell(cell, @"从正在播放中屏蔽…", nil, nil, @"person.crop.circle.badge.xmark");
             cell.selectionStyle = UITableViewCellSelectionStyleDefault;
             break;
         default:
             if (!_blocked.count) {
-                SGFillCell(cell, @"No one yet", nil, SGGrey(), nil);
+                SGFillCell(cell, @"还没有人", nil, SGGrey(), nil);
                 break;
             }
             NSDictionary *artist = _blocked[(NSUInteger)path.row];
@@ -130,7 +130,7 @@ typedef NS_ENUM(NSInteger, SGArtistSection) {
     NSArray<NSDictionary *> *artists = SGPlayingArtists();
     if (!artists.count) {
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"当前没有播放内容"
-                                                                      message:@"Play a track by the artist first, then come back here."
+                                                                      message:@"先播放该艺人的一首歌，再回到这里。"
                                                                preferredStyle:UIAlertControllerStyleAlert];
         [alert addAction:[UIAlertAction actionWithTitle:@"好" style:UIAlertActionStyleCancel handler:nil]];
         [self presentViewController:alert animated:YES completion:nil];

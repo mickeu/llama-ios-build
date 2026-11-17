@@ -199,10 +199,10 @@ static UIView *iconAccessory(NSString *name) {
     UITableViewCell *cell = SGDequeueCell(table, @"tab-editor");
     if (path.row == 0) {
         NSString *uri = _draft[SGNavbarURI];
-        SGFillCell(cell, @"Link", uri.length ? uri : @"Choose a Spotify page or enter a custom link", nil, nil);
+        SGFillCell(cell, @"链接", uri.length ? uri : @"选择 Spotify 页面或输入自定义链接", nil, nil);
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     } else {
-        SGFillCell(cell, @"Icon", iconDescription(_draft[SGNavbarIcon]), nil, nil);
+        SGFillCell(cell, @"图标", iconDescription(_draft[SGNavbarIcon]), nil, nil);
         cell.accessoryView = iconAccessory(_draft[SGNavbarIcon]);
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
@@ -272,7 +272,7 @@ static UIView *iconAccessory(NSString *name) {
         NSDictionary *tab = _presets[(NSUInteger)path.row];
         SGFillCell(cell, tab[SGNavbarTitle], tab[SGNavbarURI], nil, nil);
     } else {
-        SGFillCell(cell, @"Enter a custom link…", @"Paste a Spotify share link or spotify: URI", nil, @"link");
+        SGFillCell(cell, @"输入自定义链接…", @"Paste a Spotify share link or spotify: URI", nil, @"link");
     }
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.selectionStyle = UITableViewCellSelectionStyleDefault;
@@ -298,7 +298,7 @@ static UIView *iconAccessory(NSString *name) {
         field.keyboardType = UIKeyboardTypeURL;
     }];
     [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-    [alert addAction:[UIAlertAction actionWithTitle:@"使用链接" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    [alert addAction:[UIAlertAction actionWithTitle:@"使用链接" style:UIAlertActionStyleDefault handler:^(__unused UIAlertAction *action) {
         NSURL *url = SGSpotifyURIFromText(alert.textFields.firstObject.text);
         if (!url) {
             [self showLinkError:@"Enter a Spotify share link or spotify: URI."];
@@ -425,7 +425,7 @@ static NSArray<NSString *> *symbolNames(void) {
     self.tableView.tableHeaderView = header;
 
     _symbolHint = [UILabel new];
-    _symbolHint.text = @"Use search to find any SF Symbol";
+    _symbolHint.text = @"搜索任意 SF Symbol";
     _symbolHint.textColor = SGGrey();
     _symbolHint.font = [UIFont systemFontOfSize:13];
     _symbolHint.textAlignment = NSTextAlignmentCenter;
@@ -608,7 +608,7 @@ typedef NS_ENUM(NSInteger, SGNavbarSection) {
     [super viewDidLoad];
     self.tableView.allowsSelectionDuringEditing = YES;
     self.tableView.editing = YES;
-    _intro = SGNote(@"Drag to reorder, tap to show or hide.");
+    _intro = SGNote(@"拖拽排序，轻点显示或隐藏。");
     self.tableView.tableHeaderView = _intro;
     _entries = navbarEntries();
 }
@@ -675,12 +675,12 @@ typedef NS_ENUM(NSInteger, SGNavbarSection) {
             NSDictionary *entry = _entries[(NSUInteger)path.row];
             BOOL hidden = [entry[SGNavbarHidden] boolValue];
             NSString *uri = entry[SGNavbarURI];
-            SGFillCell(cell, entry[SGNavbarTitle], hidden ? @"Hidden" : (uri ?: @"Spotify's own tab"),
+            SGFillCell(cell, entry[SGNavbarTitle], hidden ? @"Hidden" : (uri ?: @"Spotify 自有标签"),
                      hidden ? SGGrey() : nil, hidden ? @"eye.slash" : @"eye");
             break;
         }
         case SGNavbarSectionAdd:
-            SGFillCell(cell, @"Add a tab…", nil, nil, @"plus");
+            SGFillCell(cell, @"添加标签页…", nil, nil, @"plus");
             cell.selectionStyle = UITableViewCellSelectionStyleDefault;
             break;
         default:
@@ -748,7 +748,7 @@ typedef NS_ENUM(NSInteger, SGNavbarSection) {
                                                                   message:@"Spotify 原有标签页将恢复到默认位置，已添加的标签页会被移除。"
                                                            preferredStyle:UIAlertControllerStyleAlert];
     [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-    [alert addAction:[UIAlertAction actionWithTitle:@"重置" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+    [alert addAction:[UIAlertAction actionWithTitle:@"重置" style:UIAlertActionStyleDestructive handler:^(__unused UIAlertAction *action) {
         SGSetNavbarLayout(@[]);
         SGRefreshTabBar();
         [self reload];

@@ -424,7 +424,7 @@ static UIView *valueAndChevron(NSString *text) {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    _intro = SGNote(@"Changes apply straight away.");
+    _intro = SGNote(@"更改立即生效。");
     self.tableView.tableHeaderView = _intro;
     [self buildCredits];
     self.tableView.tableFooterView = _credits;
@@ -578,7 +578,7 @@ static UIView *valueAndChevron(NSString *text) {
 - (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)path {
     if (path.section == 0) {
         UITableViewCell *cell = SGDequeueCell(table, @"master");
-        [self fillHead:cell title:@"Effects" subtitle:SGDSPStatus() symbol:@"waveform"];
+        [self fillHead:cell title:@"音效" subtitle:SGDSPStatus() symbol:@"waveform"];
         cell.accessoryView = [self switchOn:SGDSPSwitch(SGKeyDSP) action:@selector(masterToggled:) tag:0];
         return cell;
     }
@@ -740,7 +740,7 @@ static UIView *valueAndChevron(NSString *text) {
 
 - (void)confirmReset {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"重置所有音效？"
-        message:@"Every effect goes off, and every value, curve and file choice back to its default. The Effects switch and your imported files stay."
+        message:@"所有音效将关闭，所有数值、曲线和文件选择恢复默认。音效总开关和已导入文件会保留。"
         preferredStyle:UIAlertControllerStyleAlert];
     [alert addAction:[UIAlertAction actionWithTitle:@"重置" style:UIAlertActionStyleDestructive handler:^(__unused UIAlertAction *action) {
         SGDSPResetAll();
@@ -749,7 +749,7 @@ static UIView *valueAndChevron(NSString *text) {
             [self.tableView reloadData];
         } completion:nil];
     }]];
-    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
     [self presentViewController:alert animated:YES completion:nil];
 }
 

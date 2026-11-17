@@ -8,50 +8,50 @@ NSArray<SGModSection *> *SGNativePlayerScreenSections(void) {
     return @[
         SGSection(@"播放器页面", @[
             SGOptionRow(@"封面背景", nil, SGKeyPlayerBackdrop),
-            SGOptionRow(@"Glass header buttons", nil, SGKeyPlayer),
-            SGKillRow(@"Disable Canvas", @"ios-feature-canvas.canvas_enabled"),
-            SGFlagRow(@"Sheet style player", @"ios-feature-nowplaying.sheet_style_npv"),
-            SGFlagRow(@"Redesigned header", @"ios-feature-nowplaying.new_redesign_header_with_context_menu_enabled"),
-            SGFlagRow(@"New progress slider", @"ios-feature-encoreexperiments.new_npv_slider_enabled"),
-            SGFlagRow(@"Expand the sticky header on tap", @"ios-feature-nowplaying.expand_sticky_header_on_tap"),
+            SGOptionRow(@"玻璃标题栏按钮", nil, SGKeyPlayer),
+            SGKillRow(@"禁用 Canvas", @"ios-feature-canvas.canvas_enabled"),
+            SGFlagRow(@"面板式播放器", @"ios-feature-nowplaying.sheet_style_npv"),
+            SGFlagRow(@"新版标题栏", @"ios-feature-nowplaying.new_redesign_header_with_context_menu_enabled"),
+            SGFlagRow(@"新进度滑块", @"ios-feature-encoreexperiments.new_npv_slider_enabled"),
+            SGFlagRow(@"点击展开吸顶标题栏", @"ios-feature-nowplaying.expand_sticky_header_on_tap"),
         ]),
         SGSection(@"隐藏播放器下方卡片", @[
             SGHideRow(@"歌词", nil, SGHideLyricsCard),
-            SGHideRow(@"About the artist", nil, SGHideAboutArtist),
-            SGHideRow(@"Related videos", nil, SGHideRelatedVideos),
+            SGHideRow(@"关于艺人", nil, SGHideAboutArtist),
+            SGHideRow(@"相关视频", nil, SGHideRelatedVideos),
             SGHideRow(@"SongDNA", nil, SGHideSongDNA),
-            SGHideRow(@"Live events", nil, SGHideLiveEvents),
-            SGHideRow(@"Explore the artist", nil, SGHideExploreArtist),
-            SGHideRow(@"Credits", nil, SGHideCredits),
-            SGHideRow(@"Merch", nil, SGHideMerch),
-            SGHideRow(@"Recommendations", nil, SGHideRecommendations),
+            SGHideRow(@"现场活动", nil, SGHideLiveEvents),
+            SGHideRow(@"探索艺人", nil, SGHideExploreArtist),
+            SGHideRow(@"制作人员", nil, SGHideCredits),
+            SGHideRow(@"周边商品", nil, SGHideMerch),
+            SGHideRow(@"推荐内容", nil, SGHideRecommendations),
         ]),
         SGSection(@"在播放器中隐藏", @[
-            SGHideRow(@"Lyrics preview", nil, SGHideLyricsInline),
-            SGHideRow(@"Shuffle", nil, SGHideShuffle),
-            SGHideRow(@"Repeat", nil, SGHideRepeat),
-            SGHideRow(@"Add to playlist", nil, SGHideAddTo),
+            SGHideRow(@"歌词预览", nil, SGHideLyricsInline),
+            SGHideRow(@"随机播放", nil, SGHideShuffle),
+            SGHideRow(@"循环播放", nil, SGHideRepeat),
+            SGHideRow(@"添加到播放列表", nil, SGHideAddTo),
             SGHideRow(@"播放队列", nil, SGHideQueue),
-            SGHideRow(@"Share", nil, SGHideShare),
-            SGHideRow(@"Connect to a device", nil, SGHideConnect),
+            SGHideRow(@"分享", nil, SGHideShare),
+            SGHideRow(@"连接到设备", nil, SGHideConnect),
         ]),
     ];
 }
 
 SGModRow *SGGlassLyricsRow(void) {
-    return SGOptionRow(@"Glass lyrics", nil, SGKeyLyricsCard);
+    return SGOptionRow(@"玻璃歌词", nil, SGKeyLyricsCard);
 }
 
 UIViewController *SGQueueSettingsPage(void) {
     return [[SGModPage alloc] initWithTitle:@"播放队列与设备" intro:SGRestartNote sections:@[
         SGSection(@"底部弹出面板", @[
-            SGFlagRow(@"Queue as a bottom sheet", @"ios-feature-nowplaying.bottom_sheet_queue_enabled"),
-            SGFlagRow(@"Connect as a bottom sheet", @"ios-feature-nowplaying-elements.enable_connect_bottom_sheet"),
-            SGFlagRow(@"Connect sheet from the video switcher", @"ios-playbackcontrol-audiovideoswitcher-impl.enable_connect_bottom_sheet"),
+            SGFlagRow(@"底部面板队列", @"ios-feature-nowplaying.bottom_sheet_queue_enabled"),
+            SGFlagRow(@"底部面板连接", @"ios-feature-nowplaying-elements.enable_connect_bottom_sheet"),
+            SGFlagRow(@"视频切换器的连接面板", @"ios-playbackcontrol-audiovideoswitcher-impl.enable_connect_bottom_sheet"),
         ]),
         SGSection(@"播放队列", @[
-            SGFlagRow(@"Queue flip transition", @"ios-feature-nowplaying.queue_flip_transition_enabled"),
-            SGFlagRow(@"Play next in the context menu", @"ios-feature-queue.is_play_next_context_menu_enabled"),
+            SGFlagRow(@"队列翻转过渡", @"ios-feature-nowplaying.queue_flip_transition_enabled"),
+            SGFlagRow(@"上下文菜单中的“接着播放”", @"ios-feature-queue.is_play_next_context_menu_enabled"),
         ]),
     ] footer:nil];
 }

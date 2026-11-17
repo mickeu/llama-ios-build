@@ -8,7 +8,7 @@
 
 static void sayWhatIsMissing(void) {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"动态锁屏封面"
-        message:[NSString stringWithFormat:@"Animated artwork is the lock screen's own, and iOS takes one only from 26 on. This phone runs iOS %@, where the cover stays still.", UIDevice.currentDevice.systemVersion]
+        message:[NSString stringWithFormat:@"动态封面属于锁屏功能，iOS 26 起才支持。此设备运行 iOS %@，封面将保持静止。", UIDevice.currentDevice.systemVersion]
         preferredStyle:UIAlertControllerStyleAlert];
     [alert addAction:[UIAlertAction actionWithTitle:@"好" style:UIAlertActionStyleCancel handler:nil]];
     [SGTopController() presentViewController:alert animated:YES completion:nil];
@@ -40,12 +40,12 @@ SGModRow *SGArtworkSourcesRow(NSString *key, NSString *note) {
 
 NSArray<SGModRow *> *SGAnimatedArtworkRows(void) {
     if (!SGAnimatedArtworkAvailable())
-        return @[SGStatActionRow(@"Animated lock screen", nil, ^NSString *{ return @"Needs iOS 26"; }, ^{ sayWhatIsMissing(); })];
+        return @[SGStatActionRow(@"动态锁屏封面", nil, ^NSString *{ return @"需要 iOS 26"; }, ^{ sayWhatIsMissing(); })];
     SGModRow *order = SGArtworkSourcesRow(SGKeyLockScreenArtworkSources,
         @"Asked top to bottom until one has a clip. Apple Music gets only the artist and album name.");
     order.visible = ^BOOL { return SGFlag(SGKeyLockScreenArtwork, YES); };
     return @[
-        SGSwitchRow(@"Animated lock screen", @"A moving cover behind the lock screen's controls", SGKeyLockScreenArtwork),
+        SGSwitchRow(@"Animated lock screen", @"锁屏控制项后的动态封面", SGKeyLockScreenArtwork),
         order,
     ];
 }

@@ -305,7 +305,7 @@ typedef NS_ENUM(NSInteger, SGGraphicEqRow) {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    _intro = SGNote(@"AutoEq's GraphicEQ format: \"GraphicEQ:\", then a frequency and a gain in dB per point, "
+    _intro = SGNote(@"AutoEq 的 GraphicEQ 格式：“GraphicEQ:”开头，随后每个点一个频率和增益（单位 dB），"
                      "separated by semicolons. Paste the GraphicEQ file for your headphones, or edit the text and save.");
     self.tableView.tableHeaderView = _intro;
     self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;

@@ -18,7 +18,7 @@
 #import "Redesigned/NowPlayingBar/NowPlayingBar.h"
 #import "Redesigned/Kit/SGRAccent.h"
 
-NSString *const SGRedesignedUIInfo = @"The newest version of spoti.pw, leaning towards Apple Music's style. It is not compatible with the legacy look's settings.\n\nThe legacy look gives you more freedom, yet still looks like Spotify.";
+NSString *const SGRedesignedUIInfo = @"spoti.pw 的最新界面，风格更接近 Apple Music。它与旧版界面的设置不兼容。\n\n旧版界面提供更多自定义选项，但仍保留 Spotify 的风格。";
 
 void SGSetRedesignedUI(BOOL on) {
     SGSetEnabled(SGKeyRedesign, on);
@@ -26,19 +26,19 @@ void SGSetRedesignedUI(BOOL on) {
 }
 
 NSString *SGRedesignUntestedWarning(void) {
-    return [NSString stringWithFormat:@"The redesign is made for iOS 26 and has not been tested on iOS %@ at all. Expect bugs and freezes. If Spotify stops opening, delete and reinstall it.", UIDevice.currentDevice.systemVersion];
+    return [NSString stringWithFormat:@"新版界面为 iOS 26 设计，尚未在 iOS %@ 上测试。可能出现错误或卡死；若 Spotify 无法打开，请删除后重新安装。", UIDevice.currentDevice.systemVersion];
 }
 
 // The whole look changes hands at launch, so the switch asks for the restart straight away rather than
 // leaving Spotify half in the old look.
 static void offerRestart(BOOL on) {
-    NSString *restart = on ? @"The redesign takes over when Spotify starts again. Spotify closes now; open it again to see it." : @"Spotify's own look comes back when Spotify starts again. Spotify closes now; open it again to see it.";
+    NSString *restart = on ? @"新版界面会在下次启动 Spotify 时生效。Spotify 将立即关闭，请重新打开以查看效果。" : @"Spotify 原本的界面会在下次启动时恢复。Spotify 将立即关闭，请重新打开以查看效果。";
     BOOL untested = on && !SGRedesignTested();
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:untested ? @"未在此 iOS 版本测试" : @"重启 Spotify"
         message:untested ? [NSString stringWithFormat:@"%@\n\n%@", SGRedesignUntestedWarning(), restart] : restart
         preferredStyle:UIAlertControllerStyleAlert];
     [alert addAction:[UIAlertAction actionWithTitle:@"以后再说" style:UIAlertActionStyleCancel handler:nil]];
-    [alert addAction:[UIAlertAction actionWithTitle:@"Restart now" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) { SGRestartSpotify(); }]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"立即重启" style:UIAlertActionStyleDefault handler:^(__unused UIAlertAction *action) { SGRestartSpotify(); }]];
     [SGTopController() presentViewController:alert animated:YES completion:nil];
 }
 

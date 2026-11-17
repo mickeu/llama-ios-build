@@ -112,13 +112,13 @@ static NSArray<SGUpdateRelease *> *releasesToShow(void) {
 
 - (NSString *)introText {
     SGUpdateRelease *newest = SGUpdateNewestRelease();
-    if (!newest) return [NSString stringWithFormat:@"This build is %s. Nothing has been asked of GitHub yet.", SG_VERSION];
+    if (!newest) return [NSString stringWithFormat:@"当前构建为 %s，尚未向 GitHub 查询。", SG_VERSION];
     NSString *date = longDate(newest.date);
-    NSString *when = date.length ? [@" came out on " stringByAppendingString:date] : @" is out";
+    NSString *when = date.length ? [@" 发布于 " stringByAppendingString:date] : @" 已发布";
     if (SGUpdateVersion())
-        return [NSString stringWithFormat:@"%@%@, and this build is %s. Everything in between is below.",
+        return [NSString stringWithFormat:@"%@%@，当前构建为 %s。之间的所有版本见下方。",
                 newest.version, when, SG_VERSION];
-    return [NSString stringWithFormat:@"This build, %s, is GitHub's newest release; it%@. What went into it is below.",
+    return [NSString stringWithFormat:@"当前构建 %s 是 GitHub 最新版本，%@。变更内容见下方。",
             SG_VERSION, when];
 }
 

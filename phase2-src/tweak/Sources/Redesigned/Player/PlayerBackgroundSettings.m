@@ -133,9 +133,9 @@ static NSArray<SGModRow *> *shownFor(SGRPlayerBackground background, NSArray<SGM
 
 NSArray<SGModSection *> *SGRPlayerBackgroundSections(void) {
     migrate();
-    NSArray<SGModRow *> *choices = SGChoiceListRows(SGRKeyPlayerBackground, @[@"Fluid artwork", @"Animated artwork"],
-        @[@"The cover itself, blurred and slowly warped", @"The track's Canvas or the album's animated cover, looping"],
-        kDefaultBackground, ^(NSInteger index) {
+    NSArray<SGModRow *> *choices = SGChoiceListRows(SGRKeyPlayerBackground, @[@"流体封面", @"动态封面"],
+        @[@"封面本身，模糊并缓慢扭曲", @"曲目 Canvas 或专辑动态封面循环播放"],
+        kDefaultBackground, ^(__unused NSInteger index) {
             [NSNotificationCenter.defaultCenter postNotificationName:SGRPlayerBackgroundDidChangeNotification object:nil];
         });
 
@@ -151,15 +151,15 @@ NSArray<SGModSection *> *SGRPlayerBackgroundSections(void) {
     reset.symbol = @"arrow.counterclockwise";
 
     SGModRow *sources = SGArtworkSourcesRow(SGRKeyPlayerArtworkSources,
-        @"Asked top to bottom until one has a clip. Apple Music gets only the artist and album name.");
+        @"将按从上到下的顺序尝试，直到找到视频片段。Apple Music 仅会获得艺人名和专辑名。");
 
     return @[
-        SGNotedSection(@"Background", choices, @"A paused song holds the background still."),
+        SGNotedSection(@"背景", choices, @"暂停时背景保持静止。"),
         SGSection(nil, shownFor(SGRPlayerBackgroundFluid, @[preview])),
         SGNotedSection(nil, shownFor(SGRPlayerBackgroundFluid, sliders),
-                       @"The player follows these as they move. Brightness past 100% can make white text harder to read on a light cover."),
+                       @"播放器会跟随这些元素移动。亮度超过 100% 可能让浅色封面上的白字更难阅读。"),
         SGSection(nil, shownFor(SGRPlayerBackgroundFluid, @[reset])),
         SGNotedSection(nil, shownFor(SGRPlayerBackgroundAnimated, @[sources]),
-                       @"A track without a clip shows Fluid artwork, and so does every track in Low Power Mode or with Reduce Motion on."),
+                       @"没有视频片段的曲目会显示流体封面；低电量模式或开启“减弱动态效果”时，所有曲目也都如此。"),
     ];
 }

@@ -4,11 +4,11 @@
 #import "Flags.h"
 
 static NSString *flagState(const SGFlagDef *flag, id value) {
-    if (value) return [NSString stringWithFormat:@"forced %@", flag->type == SGFlagBool ? ([value boolValue] ? @"on" : @"off") : value];
+    if (value) return [NSString stringWithFormat:@"强制为 %@", flag->type == SGFlagBool ? ([value boolValue] ? @"开启" : @"关闭") : value];
     switch (flag->type) {
-        case SGFlagBool: return flag->value ? @"on by default" : @"off by default";
-        case SGFlagInt: return [NSString stringWithFormat:@"%ld by default, %ld to %ld", flag->value, flag->lower, flag->upper];
-        case SGFlagEnum: return @"text value";
+        case SGFlagBool: return flag->value ? @"默认开启" : @"默认关闭";
+        case SGFlagInt: return [NSString stringWithFormat:@"默认 %ld，范围 %ld 到 %ld", flag->value, flag->lower, flag->upper];
+        case SGFlagEnum: return @"文本值";
         default: return @"类型未知";
     }
 }
@@ -37,10 +37,10 @@ static NSString *flagState(const SGFlagDef *flag, id value) {
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
     _search = [UISearchBar new];
-    _search.placeholder = [NSString stringWithFormat:@"Search %lu flags", (unsigned long)SGFlagCount];
+    _search.placeholder = [NSString stringWithFormat:@"搜索 %lu 个旗标", (unsigned long)SGFlagCount];
     _search.searchBarStyle = UISearchBarStyleMinimal;
     _search.delegate = self;
-    _header = SGNote(@"Auto keeps Spotify's value. Changes apply after you restart Spotify.");
+    _header = SGNote(@"自动保持 Spotify 的值。重启 Spotify 后生效。");
     [_header addSubview:_search];
     self.tableView.tableHeaderView = _header;
     [self reload];

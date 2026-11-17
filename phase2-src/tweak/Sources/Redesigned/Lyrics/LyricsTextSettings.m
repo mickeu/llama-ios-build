@@ -22,7 +22,7 @@
     [super viewDidLoad];
     _order = [SGRLyricsTextOrder() mutableCopy];
     self.tableView.editing = YES;
-    _footer = SGNote(@"Pronunciation and translation are turned on from the button in the lyrics' corner.");
+    _footer = SGNote(@"发音与翻译从歌词角落的按钮开启。");
     self.tableView.tableFooterView = _footer;
 }
 

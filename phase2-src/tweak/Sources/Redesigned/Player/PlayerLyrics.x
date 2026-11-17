@@ -175,7 +175,7 @@ static __weak UIView *sg_titleElement;      // the arranged element view holding
     // What the lines leave when a song has none, which only Sing opens them for. A sibling of the lines'
     // view, so it goes whenever they have something to show (SGRKaraokeView's syncSiblings).
     _empty = [UILabel new];
-    _empty.text = @"Lyrics aren't available for this song.";
+    _empty.text = @"这首歌没有歌词。";
     _empty.textColor = SGRSecondary();
     _empty.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
     _empty.adjustsFontForContentSizeCategory = YES;

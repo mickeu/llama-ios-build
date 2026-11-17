@@ -12,7 +12,7 @@ static SGModRow *choiceRow(NSString *title, NSString *subtitle, SGHomeChoice cho
 
 UIViewController *SGHomeGradientPage(void) {
     return [[SGModPage alloc] initWithTitle:@"渐变"
-                                      intro:@"Turning it on or off applies after you restart Spotify."
+                                      intro:@"开启或关闭后，重启 Spotify 生效。"
                                    sections:@[
         SGSection(@"渐变", @[
             SGOptionRow(@"显示", nil, SGKeyHomeGradient),
@@ -26,13 +26,13 @@ UIViewController *SGHomeGradientPage(void) {
 static UIViewController *libraryPage(void) {
     return [[SGModPage alloc] initWithTitle:@"音乐库" intro:nil sections:@[
         SGSection(@"音乐库", @[
-            SGFlagRow(@"Denser rows", @"ios-feature-yourlibaryx.denser_rows_enabled"),
-            SGFlagRow(@"Sort playlists by recently updated", @"ios-feature-yourlibaryx.recently_updated_playlists_sort_enabled"),
-            SGFlagRow(@"Sort artists by recently updated", @"ios-feature-yourlibaryx.recently_updated_artists_sort_enabled"),
-            SGFlagRow(@"Recents", @"ios-feature-yourlibaryx.recents_enabled"),
-            SGFlagRow(@"Recents sort order", @"ios-feature-yourlibaryx.recents_sort_order_enabled"),
-            SGFlagRow(@"Library settings", @"ios-feature-yourlibaryx.library_settings_enabled"),
-            SGFlagRow(@"Library Pro", @"ios-feature-yourlibaryx.your_library_pro_enabled"),
+            SGFlagRow(@"更紧凑的列表行", @"ios-feature-yourlibaryx.denser_rows_enabled"),
+            SGFlagRow(@"按最近更新排序播放列表", @"ios-feature-yourlibaryx.recently_updated_playlists_sort_enabled"),
+            SGFlagRow(@"按最近更新排序艺人", @"ios-feature-yourlibaryx.recently_updated_artists_sort_enabled"),
+            SGFlagRow(@"最近播放", @"ios-feature-yourlibaryx.recents_enabled"),
+            SGFlagRow(@"最近播放排序方式", @"ios-feature-yourlibaryx.recents_sort_order_enabled"),
+            SGFlagRow(@"音乐库设置", @"ios-feature-yourlibaryx.library_settings_enabled"),
+            SGFlagRow(@"音乐库专业版", @"ios-feature-yourlibaryx.your_library_pro_enabled"),
         ]),
     ] footer:nil];
 }
@@ -54,16 +54,16 @@ UIViewController *SGHomeSettingsPage(void) {
         ]),
         SGSection(@"主页", @[
             SGWithSymbol(gradient, @"rectangle.tophalf.inset.filled"),
-            SGFlagRow(@"Pull to refresh", @"ios-home-evopage-impl.pull_to_refresh_enabled"),
+            SGFlagRow(@"下拉刷新", @"ios-home-evopage-impl.pull_to_refresh_enabled"),
         ]),
         SGSection(@"在主页隐藏", @[
-            SGHideRow(@"Filter pills", nil, SGHideHomePills),
-            SGHideRow(@"Shortcuts grid", nil, SGHideHomeShortcuts),
-            SGHideRow(@"Promo cards", nil, SGHideHomePromo),
-            SGHideRow(@"Preview cards", nil, SGHideHomePreviews),
-            SGHideRow(@"DJ card", nil, SGHideHomeDJ),
-            SGKillRow(@"DJ button", @"ios-home-evopage-impl.idj_show_dj_button"),
-            SGKillRow(@"DJ beta badge", @"ios-home-evopage-impl.dj_mdc_beta_badge_enabled"),
+            SGHideRow(@"筛选标签", nil, SGHideHomePills),
+            SGHideRow(@"快捷方式网格", nil, SGHideHomeShortcuts),
+            SGHideRow(@"推广卡片", nil, SGHideHomePromo),
+            SGHideRow(@"预览卡片", nil, SGHideHomePreviews),
+            SGHideRow(@"DJ 卡片", nil, SGHideHomeDJ),
+            SGKillRow(@"DJ 按钮", @"ios-home-evopage-impl.idj_show_dj_button"),
+            SGKillRow(@"DJ 测试版标识", @"ios-home-evopage-impl.dj_mdc_beta_badge_enabled"),
         ]),
     ];
     return [[SGModPage alloc] initWithTitle:@"主页与音乐库" intro:nil sections:sections footer:nil];

@@ -169,6 +169,7 @@ static void SGIconPreloadAllPreviews(NSArray<NSString *> *keys, dispatch_block_t
     content.image = SGIconCachedPreview(key); content.imageProperties.maximumSize = CGSizeMake(44, 44); content.imageProperties.reservedLayoutSize = CGSizeMake(44, 44); content.imageToTextPadding = 14; cell.contentConfiguration = content;
     cell.selectionStyle = UITableViewCellSelectionStyleDefault;
     NSString *current = UIApplication.sharedApplication.alternateIconName;
+    cell.accessoryView = nil;
     if ((!key && !current.length) || [key isEqualToString:current]) { UIImageView *tick = SGSymbolView(@"checkmark", 13, UIImageSymbolWeightSemibold, 16); tick.tintColor = SGGreen(); cell.accessoryView = tick; }
     return cell;
 }

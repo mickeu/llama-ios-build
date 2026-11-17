@@ -681,7 +681,7 @@ static UIAction *actionFor(SGRPlayerMenuTakeover *t, SGRPlayerMenuSpotifyRow *ro
 
 static UIAction *speedAndPitchAction(SGRPlayerMenuTakeover *t) {
     __weak SGRPlayerMenuTakeover *weak = t;
-    UIAction *action = [UIAction actionWithTitle:@"Speed and pitch" image:symbol(@"slider.horizontal.3") identifier:nil handler:^(UIAction *sender) {
+    UIAction *action = [UIAction actionWithTitle:@"速度与音调" image:symbol(@"slider.horizontal.3") identifier:nil handler:^(UIAction *sender) {
         pick(weak, ^(SGRPlayerMenuTakeover *strong) { openSpeedPitch(strong); });
     }];
     action.subtitle = SGSpeedPitchSummary();

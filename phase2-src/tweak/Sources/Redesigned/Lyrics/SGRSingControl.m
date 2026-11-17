@@ -249,8 +249,8 @@ static SGRSingLook lookOf(SGSingState state) {
     _fill.userInteractionEnabled = NO;
     _fill.backgroundColor = [UIColor colorWithWhite:1 alpha:kFillWhite];
     _slider = [SGRVocalSlider new];
-    _slider.accessibilityLabel = @"Vocal volume";
-    _slider.accessibilityHint = @"Original vocals at the top, 20 percent at the bottom";
+    _slider.accessibilityLabel = @"人声音量";
+    _slider.accessibilityHint = @"顶部为原始人声，底部为 20%";
     _slider.accessibilityIdentifier = @"sing.vocalLevel";
     [_slider addTarget:self action:@selector(changed) forControlEvents:UIControlEventValueChanged];
     // The capsule draws on and off itself: a custom button, so UIKit adds no highlight or selected look.
@@ -314,21 +314,21 @@ static SGRSingLook lookOf(SGSingState state) {
     SGSingState state = _shown;
     SGRSingLook look = lookOf(state);
     BOOL original = _slider.value >= 1;
-    _slider.accessibilityValue = original ? @"Original" : [NSString stringWithFormat:@"%.0f percent", _slider.value * 100];
+    _slider.accessibilityValue = original ? @"原始" : [NSString stringWithFormat:@"%.0f%%", _slider.value * 100];
     _button.accessibilityLabel = @"Sing";
-    _button.accessibilityValue = state == SGSingPreparing ? @"Preparing Sing" : state == SGSingRecovering ? @"Restoring Sing"
-        : state == SGSingDraining ? @"Turning Sing off" : state == SGSingFailed ? @"Sing stopped"
-        : look.on ? (original ? @"On, original vocals" : [NSString stringWithFormat:@"On, %.0f percent vocals", _slider.value * 100])
-        : @"Off";
-    _button.accessibilityHint = state == SGSingPreparing ? @"Tap to cancel." : state == SGSingDraining ? @"Tap to turn Sing back on."
-        : state == SGSingFailed ? @"Tap to hear why Sing stopped."
-        : look.on ? (_expanded ? @"Tap to turn Sing off. Drag to adjust the vocals." : @"Tap for the vocal volume.")
+    _button.accessibilityValue = state == SGSingPreparing ? @"正在准备 Sing" : state == SGSingRecovering ? @"正在恢复 Sing"
+        : state == SGSingDraining ? @"正在关闭 Sing" : state == SGSingFailed ? @"Sing 已停止"
+        : look.on ? (original ? @"开启，原始人声" : [NSString stringWithFormat:@"开启，%.0f%% 人声", _slider.value * 100])
+        : @"关闭";
+    _button.accessibilityHint = state == SGSingPreparing ? @"轻点取消。" : state == SGSingDraining ? @"轻点重新开启 Sing。"
+        : state == SGSingFailed ? @"轻点了解 Sing 停止的原因。"
+        : look.on ? (_expanded ? @"轻点关闭 Sing。拖拽调节人声。" : @"轻点调节人声音量。")
         : @"Turns the song's vocals down on this iPhone.";
     _button.accessibilityTraits = UIAccessibilityTraitButton | (look.on ? UIAccessibilityTraitSelected : 0);
     // Off from wherever the button is, without opening the capsule first.
     __weak typeof(self) weak = self;
     _button.accessibilityCustomActions = look.on || look.preparing ? @[[[UIAccessibilityCustomAction alloc]
-        initWithName:@"Turn Off Sing" actionHandler:^BOOL(UIAccessibilityCustomAction *action) { [weak turnOff]; return YES; }]] : nil;
+        initWithName:@"Turn Off Sing" actionHandler:^BOOL(__unused UIAccessibilityCustomAction *action) { [weak turnOff]; return YES; }]] : nil;
 }
 
 - (void)refresh { [self refreshAnimated:self.window != nil]; }
@@ -363,7 +363,7 @@ static SGRSingLook lookOf(SGSingState state) {
     // The ring starts before it fades in and stops only once it has faded out.
     if (look.ring) _ring.turning = YES;
     __weak typeof(self) weak = self;
-    SGRAnimate(SGRMotionFade, ^{ [self applyLook]; }, ^(BOOL finished) {
+    SGRAnimate(SGRMotionFade, ^{ [self applyLook]; }, ^(__unused BOOL finished) {
         typeof(self) self = weak;
         if (self) self.ring.turning = lookOf(self.shown).ring;
     });
@@ -409,7 +409,7 @@ static SGRSingLook lookOf(SGSingState state) {
     _collapseTimer = nil;
     if (!_expanded) return;
     __weak typeof(self) weak = self;
-    _collapseTimer = [NSTimer timerWithTimeInterval:MAX(wait, 0.1) repeats:NO block:^(NSTimer *timer) { [weak collapseIfIdle]; }];
+    _collapseTimer = [NSTimer timerWithTimeInterval:MAX(wait, 0.1) repeats:NO block:^(__unused NSTimer *timer) { [weak collapseIfIdle]; }];
     [NSRunLoop.mainRunLoop addTimer:_collapseTimer forMode:NSRunLoopCommonModes];
 }
 
@@ -566,15 +566,15 @@ static SGRSingLook lookOf(SGSingState state) {
     if (!presenter || presenter.presentedViewController || _explaining) return;
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Sing" message:SGSingExplanation() preferredStyle:UIAlertControllerStyleAlert];
     __weak typeof(self) weak = self;
-    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+    [alert addAction:[UIAlertAction actionWithTitle:@"好" style:UIAlertActionStyleCancel handler:^(__unused UIAlertAction *action) {
         [weak finishedExplaining];
     }]];
-    if (SGSingCanRetry()) [alert addAction:[UIAlertAction actionWithTitle:@"Try again" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    if (SGSingCanRetry()) [alert addAction:[UIAlertAction actionWithTitle:@"重试" style:UIAlertActionStyleDefault handler:^(__unused UIAlertAction *action) {
         [weak finishedExplaining];
         // Thermal state and the playback route can change while the alert is on screen.
         if (SGSingCanRetry()) [weak turnOn];
     }]];
-    if (SGSingCurrentState() == SGSingFailed) [alert addAction:[UIAlertAction actionWithTitle:@"Turn off Sing" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    if (SGSingCurrentState() == SGSingFailed) [alert addAction:[UIAlertAction actionWithTitle:@"关闭 Sing" style:UIAlertActionStyleDefault handler:^(__unused UIAlertAction *action) {
         [weak finishedExplaining];
         [weak turnOff];
     }]];

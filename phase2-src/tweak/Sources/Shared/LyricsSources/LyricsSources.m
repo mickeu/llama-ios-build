@@ -55,7 +55,7 @@ void SGLyricsNoteReply(NSURLResponse *response, NSError *error) {
 NSURL *SGLyricsURL(NSString *base, NSDictionary<NSString *, NSString *> *query) {
     NSURLComponents *url = [NSURLComponents componentsWithString:base];
     NSMutableArray<NSURLQueryItem *> *items = [NSMutableArray array];
-    [query enumerateKeysAndObjectsUsingBlock:^(NSString *name, NSString *value, BOOL *stop) {
+    [query enumerateKeysAndObjectsUsingBlock:^(NSString *name, NSString *value, __unused BOOL *stop) {
         [items addObject:[NSURLQueryItem queryItemWithName:name value:value]];
     }];
     url.queryItems = items;
@@ -65,7 +65,7 @@ NSURL *SGLyricsURL(NSString *base, NSDictionary<NSString *, NSString *> *query) 
 static NSMutableURLRequest *requestFor(NSURL *url, NSDictionary<NSString *, NSString *> *headers) {
     if (!url) return nil;
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:kTimeout];
-    [headers enumerateKeysAndObjectsUsingBlock:^(NSString *name, NSString *value, BOOL *stop) {
+    [headers enumerateKeysAndObjectsUsingBlock:^(NSString *name, NSString *value, __unused BOOL *stop) {
         [request setValue:value forHTTPHeaderField:name];
     }];
     return request;
@@ -252,7 +252,7 @@ BOOL SGLyricsActive(void) {
         active = SGLyricsEnabled();
         if (active && SGLyricsEeveeReplaces()) {
             active = NO;
-            SGLog(@"lyrics: EeveeSpotify replaces lyrics itself, the sources stay off");
+            SGLog(@"lyrics: %@", @"EeveeSpotify replaces lyrics itself, the sources stay off");
         }
     });
     return active;
@@ -499,7 +499,7 @@ BOOL SGLyricsMayHave(NSString *trackID) {
 
 void SGLyricsPrefetch(NSString *trackID) {
     if (!trackID.length) return;
-    SGLyricsFetch(trackID, ^(SGLyricsResult *result) {});
+    SGLyricsFetch(trackID, ^(__unused SGLyricsResult *result) {});
 }
 
 NSInteger SGLyricsSpotifyHas(NSString *trackID) {
@@ -552,10 +552,10 @@ NSArray<NSString *> *SGLyricsTranslationLanguages(void) {
 }
 
 NSArray<NSString *> *SGLyricsTranslationLanguageNames(void) {
-    NSLocale *english = [NSLocale localeWithLocaleIdentifier:@"en"];
+    NSLocale *chinese = [NSLocale localeWithLocaleIdentifier:@"zh_Hans"];
     NSMutableArray<NSString *> *names = [NSMutableArray array];
     for (NSString *tag in SGLyricsTranslationLanguages()) {
-        [names addObject:tag.length ? [english localizedStringForLocaleIdentifier:tag] ?: tag : @"Any"];
+        [names addObject:tag.length ? [chinese localizedStringForLocaleIdentifier:tag] ?: tag : @"任意"];
     }
     return names;
 }
@@ -580,13 +580,13 @@ void SGLyricsOpenCredit(SGLyricsCredit *credit) {
     }
     if (!links.count) return;
     UIAlertController *sheet = [UIAlertController alertControllerWithTitle:credit.text message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    [links enumerateObjectsUsingBlock:^(NSURL *link, NSUInteger i, BOOL *stop) {
+    [links enumerateObjectsUsingBlock:^(NSURL *link, NSUInteger i, __unused BOOL *stop) {
         NSString *title = i < credit.linkTitles.count ? credit.linkTitles[i] : link.host;
-        [sheet addAction:[UIAlertAction actionWithTitle:title style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [sheet addAction:[UIAlertAction actionWithTitle:title style:UIAlertActionStyleDefault handler:^(__unused UIAlertAction *action) {
             SGOpenURL(link.absoluteString);
         }]];
     }];
-    [sheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+    [sheet addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
     sheet.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
     UIViewController *top = SGTopController();
     sheet.popoverPresentationController.sourceView = top.view;

@@ -19,7 +19,7 @@ SGLyricsMeaningsLevel SGLyricsMeaningsShown(void) {
 }
 
 SGModRow *SGLyricsMeaningsRow(void) {
-    SGModRow *row = SGChoiceRow(@"Line meanings", nil, SGKeyLyricsMeanings,
+    SGModRow *row = SGChoiceRow(@"逐行释义", nil, SGKeyLyricsMeanings,
                                 @[@"Off", @"From the artist", @"Artist and editors", @"Everyone"], SGLyricsMeaningsOff);
     row.choiceFooter = @"Explanations from Genius. Tap the bubble after a line, or hold the line.";
     return row;
@@ -101,13 +101,13 @@ static NSDictionary<NSString *, NSString *> *headers(void) {
 static void getJSON(NSString *base, NSDictionary<NSString *, NSString *> *query, void (^done)(NSDictionary *response)) {
     NSURLComponents *url = [NSURLComponents componentsWithString:base];
     NSMutableArray<NSURLQueryItem *> *items = [NSMutableArray array];
-    [query enumerateKeysAndObjectsUsingBlock:^(NSString *name, NSString *value, BOOL *stop) {
+    [query enumerateKeysAndObjectsUsingBlock:^(NSString *name, NSString *value, __unused BOOL *stop) {
         [items addObject:[NSURLQueryItem queryItemWithName:name value:value]];
     }];
     url.queryItems = items;
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url.URL cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:10];
-    [headers() enumerateKeysAndObjectsUsingBlock:^(NSString *name, NSString *value, BOOL *stop) {
+    [headers() enumerateKeysAndObjectsUsingBlock:^(NSString *name, NSString *value, __unused BOOL *stop) {
         [request setValue:value forHTTPHeaderField:name];
     }];
     [[NSURLSession.sharedSession dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *reply, NSError *error) {

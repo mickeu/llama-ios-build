@@ -150,7 +150,7 @@ static NSString *signedNumber(double value, int decimals) {
         element.band = i;
         element.accessibilityLabel = spokenBand(_bands[i]);
         element.accessibilityTraits = UIAccessibilityTraitAdjustable;
-        element.accessibilityHint = @"Double tap and hold, then drag up or down, or swipe up or down to adjust.";
+        element.accessibilityHint = @"双击并按住，然后上下拖拽或上下滑动调整。";
         [_elements addObject:element];
     }
 
@@ -168,7 +168,7 @@ static NSString *signedNumber(double value, int decimals) {
 
     _reset = [self barButton:@"Reset" color:SGGrey()];
     [_reset addTarget:self action:@selector(resetTapped) forControlEvents:UIControlEventTouchUpInside];
-    _reset.accessibilityHint = _equalizer ? @"Every band back to zero." : @"Every point back to zero.";
+    _reset.accessibilityHint = _equalizer ? @"所有频段归零。" : @"所有点归零。";
     if (_equalizer) {
         _presets = [self barButton:@"Custom" color:UIColor.whiteColor];
         UIButtonConfiguration *config = _presets.configuration;
@@ -177,10 +177,10 @@ static NSString *signedNumber(double value, int decimals) {
         config.imagePadding = 5;
         _presets.configuration = config;
         _presets.showsMenuAsPrimaryAction = YES;
-        _presets.accessibilityLabel = @"Preset";
+        _presets.accessibilityLabel = @"预设";
     } else {
         _name = [UILabel new];
-        _name.text = @"Amount";
+        _name.text = @"数量";
         _name.textColor = UIColor.whiteColor;
         _name.accessibilityTraits = UIAccessibilityTraitHeader;
         [self addSubview:_name];
@@ -300,11 +300,11 @@ static NSString *signedNumber(double value, int decimals) {
     [CATransaction commit];
 
     NSArray<NSNumber *> *levels = @[@(_limit), @0, @(-_limit)];
-    [_scale enumerateObjectsUsingBlock:^(UILabel *label, NSUInteger i, BOOL *stop) {
+    [_scale enumerateObjectsUsingBlock:^(UILabel *label, NSUInteger i, __unused BOOL *stop) {
         label.frame = CGRectMake(CGRectGetMaxX(plot), [self yFor:levels[i].doubleValue] - 6, kGutter, 12);
     }];
     CGFloat reach = [self reach];
-    [_bandLabels enumerateObjectsUsingBlock:^(UILabel *label, NSUInteger i, BOOL *stop) {
+    [_bandLabels enumerateObjectsUsingBlock:^(UILabel *label, NSUInteger i, __unused BOOL *stop) {
         CGFloat x = [self xFor:self->_bands[i]];
         label.frame = CGRectMake(x - 16, CGRectGetMaxY(plot) + kInset + 5, 32, 12);
         self->_elements[i].accessibilityFrameInContainerSpace = CGRectMake(x - reach, CGRectGetMinY(plot) - kInset, reach * 2, plot.size.height + 2 * kInset);
@@ -379,7 +379,7 @@ static NSString *signedNumber(double value, int decimals) {
     }
     _curve.path = line.CGPath;
     _fill.path = area.CGPath;
-    [_handles enumerateObjectsUsingBlock:^(CAShapeLayer *handle, NSUInteger i, BOOL *stop) {
+    [_handles enumerateObjectsUsingBlock:^(CAShapeLayer *handle, NSUInteger i, __unused BOOL *stop) {
         handle.position = CGPointMake([self xFor:self->_bands[i]], [self yFor:self->_gains[i].doubleValue]);
     }];
     [CATransaction commit];
@@ -408,8 +408,8 @@ static NSString *signedNumber(double value, int decimals) {
     _presets.accessibilityValue = config.title;
     NSMutableArray<UIAction *> *actions = [NSMutableArray array];
     __weak typeof(self) weakSelf = self;
-    [names enumerateObjectsUsingBlock:^(NSString *name, NSUInteger i, BOOL *stop) {
-        UIAction *action = [UIAction actionWithTitle:name image:nil identifier:nil handler:^(UIAction *a) {
+    [names enumerateObjectsUsingBlock:^(NSString *name, NSUInteger i, __unused BOOL *stop) {
+        UIAction *action = [UIAction actionWithTitle:name image:nil identifier:nil handler:^(__unused UIAction *a) {
             [weakSelf setGains:SGDSPEqualizerPreset((NSInteger)i) animated:YES];
         }];
         action.state = (NSInteger)i == match ? UIMenuElementStateOn : UIMenuElementStateOff;

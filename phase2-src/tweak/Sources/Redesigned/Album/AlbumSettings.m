@@ -5,7 +5,7 @@
 UIViewController *SGRAlbumSettingsPage(void) {
     NSArray<SGModSection *> *sections = @[
         SGNotedSection(@"标题栏", @[
-            SGSwitchRow(@"Animated cover", @"Apple Music's, where the album has one", SGRKeyAnimatedCovers),
+            SGSwitchRow(@"动态封面", @"来自 Apple Music（专辑有动态封面时）", SGRKeyAnimatedCovers),
         ], @"Apple Music gets only the artist and album name. Nothing is downloaded in Low Data or Low Power Mode."),
     ];
     return [[SGModPage alloc] initWithTitle:@"专辑" intro:nil sections:sections footer:nil];

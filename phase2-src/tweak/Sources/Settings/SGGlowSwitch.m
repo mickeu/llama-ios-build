@@ -168,7 +168,7 @@ static CAShapeLayer *newStroke(CGFloat width) {
     _glow.opacity = glow ? (on ? 0.9 : 0.45) : 0;
     _knob.alpha = self.enabled ? 1 : 0.5;
     self.alpha = self.enabled ? 1 : 0.4;
-    self.accessibilityValue = on ? @"On" : @"Off";
+    self.accessibilityValue = on ? @"On" : @"关闭";
     [self updateMotion];
 }
 

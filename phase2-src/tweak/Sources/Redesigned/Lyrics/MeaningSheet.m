@@ -106,7 +106,7 @@ static NSString *authorSymbol(SGLyricsMeaningAuthor author) {
                           withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:11 weight:UIImageSymbolWeightSemibold]];
     _author.configuration = badge;
     _body.text = meaning.body;
-    _count.text = _meanings.count > 1 ? [NSString stringWithFormat:@"Genius · %lu of %lu", (unsigned long)_index + 1, (unsigned long)_meanings.count]
+    _count.text = _meanings.count > 1 ? [NSString stringWithFormat:@"Genius · %lu/%lu", (unsigned long)_index + 1, (unsigned long)_meanings.count]
                                       : @"Genius";
     _next.hidden = _meanings.count < 2;
     _open.hidden = !meaning.url.length;

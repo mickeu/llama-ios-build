@@ -5,7 +5,7 @@
 static NSString *const kSpicyDashboard = @"https://developers.spicylyrics.org/dashboard";
 
 static SGModSection *spicySection(void) {
-    SGModRow *key = SGTextRow(@"Spicy Lyrics key",
+    SGModRow *key = SGTextRow(@"Spicy Lyrics 密钥",
         @"粘贴你在 Spicy Lyrics 开发者平台创建的应用公开密钥（sl_pk_…）。", @"sl_pk_…",
         ^NSString *{
             NSString *shown = SGSpicyLyricsKeyShown();

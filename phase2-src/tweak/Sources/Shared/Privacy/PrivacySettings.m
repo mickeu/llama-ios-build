@@ -6,7 +6,7 @@
 static UIViewController *tipsPage(void) {
     return [[SGModPage alloc] initWithTitle:@"提示" intro:SGRestartNote sections:@[
         SGSection(@"减少干预提示", @[
-            SGFlagRow(@"Reduce interventions", @"ios-messaging-reduceinterventions-impl.enabled"),
+            SGFlagRow(@"减少干预提示", @"ios-messaging-reduceinterventions-impl.enabled"),
         ]),
         SGSection(@"工具提示", @[
             SGKillRow(@"隐藏智能随机播放提示", @"ios-messaging-reduceinterventions-impl.enable_message_smart_shuffle_helper_tooltip"),
@@ -29,7 +29,7 @@ static SGModSection *countersSection(void) {
             return @(SGBlockedCount(label)).stringValue;
         })];
     }
-    [counts addObject:SGStatRow(@"Total", ^NSString *{
+    [counts addObject:SGStatRow(@"总计", ^NSString *{
         return @(SGBlockedCount(nil)).stringValue;
     })];
     [counts addObject:SGActionRow(@"重置遥测计数器", nil, ^{ SGResetBlocked(); })];

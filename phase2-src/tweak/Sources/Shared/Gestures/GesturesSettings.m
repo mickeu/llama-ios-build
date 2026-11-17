@@ -63,7 +63,7 @@ static NSString *cellLabel(SGGestureAction action) {
         [_frame addSubview:label];
         [_labels addObject:label];
     }
-    [zones enumerateObjectsUsingBlock:^(NSNumber *action, NSUInteger index, BOOL *stop) {
+    [zones enumerateObjectsUsingBlock:^(NSNumber *action, NSUInteger index, __unused BOOL *stop) {
         UILabel *label = self->_labels[index];
         SGGestureAction value = (SGGestureAction)action.integerValue;
         label.text = cellLabel(value);
@@ -81,7 +81,7 @@ static NSString *cellLabel(SGGestureAction action) {
     NSInteger columns, rows;
     SGGestureGrid(&columns, &rows);
     CGFloat cellWidth = width / columns, cellHeight = height / rows;
-    [_labels enumerateObjectsUsingBlock:^(UILabel *label, NSUInteger index, BOOL *stop) {
+    [_labels enumerateObjectsUsingBlock:^(UILabel *label, NSUInteger index, __unused BOOL *stop) {
         NSInteger column = (NSInteger)index % columns, row = (NSInteger)index / columns;
         label.frame = CGRectMake(column * cellWidth, row * cellHeight, cellWidth, cellHeight);
     }];
@@ -123,7 +123,7 @@ static NSString *cellLabel(SGGestureAction action) {
     _header.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     [_header addSubview:_grid];
     self.tableView.tableHeaderView = _header;
-    _footer = SGNote(@"Spotify's own buttons keep their taps.");
+    _footer = SGNote(@"Spotify 自带按钮保留原有点按。");
     self.tableView.tableFooterView = _footer;
 }
 
@@ -147,8 +147,8 @@ static NSString *cellLabel(SGGestureAction action) {
     UIAlertController *sheet = [UIAlertController alertControllerWithTitle:@"在此处双击"
                                                                   message:nil
                                                            preferredStyle:UIAlertControllerStyleActionSheet];
-    [names enumerateObjectsUsingBlock:^(NSString *name, NSUInteger index, BOOL *stop) {
-        [sheet addAction:[UIAlertAction actionWithTitle:name style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    [names enumerateObjectsUsingBlock:^(NSString *name, NSUInteger index, __unused BOOL *stop) {
+        [sheet addAction:[UIAlertAction actionWithTitle:name style:UIAlertActionStyleDefault handler:^(__unused UIAlertAction *action) {
             SGSetGestureZone(cell, (SGGestureAction)index);
             [self refresh];
         }]];
@@ -189,7 +189,7 @@ static NSString *cellLabel(SGGestureAction action) {
     UITableViewCell *cell = SGDequeueCell(table, @"gesture");
     switch (path.section) {
         case 0: {
-            SGFillCell(cell, @"Double tap the player", @"Tap a cell to set it", nil, nil);
+            SGFillCell(cell, @"双击播放器", @"轻点一项进行设置", nil, nil);
             UISwitch *toggle = [UISwitch new];
             toggle.onTintColor = SGGreen();
             toggle.on = SGFlag(SGKeyGestures, NO);
