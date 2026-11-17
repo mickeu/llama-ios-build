@@ -41,37 +41,8 @@ NSData *SGUsageBody(void);
 BOOL SGUsageOwed(void);        // on, and not yet sent this UTC day
 void SGUsageNoteAsked(void);
 
-// UpdateNotice.m: the sheet a release newer than this build brings on its own, a few seconds after
-// Spotify comes up, once per release. Watched from the settings %ctor; the switch is on the Updates
-// page and takes effect at once.
-#define SGKeyUpdateNotice @"spotifyglass.update.notice"
-void SGWatchForUpdates(void);
-BOOL SGUpdateNoticeShown(void);   // this run, so the donate sheet stays out of its way
-
-
-// Whether the now playing card on the lock screen can open this build. It depends on the signature,
-// not on the mod: iOS launches by the App ID of the application-identifier entitlement, so a build
-// whose bundle id is not that App ID cannot be opened from the card. Signing.m says so once.
-extern NSString *const SGSigningHelpURL;
-NSString *SGSigningAppIdentifier(void);      // App ID without the team prefix, nil if unreadable
-BOOL SGSigningOpensFromLockScreen(void);     // YES when unreadable, so a build that works stays quiet
-SGModRow *SGSigningWarningRow(void);          // nil while the signature is sound
-void SGCheckSigningOnce(void);
-void SGShowSigningFixIfPending(void);   // the sheet the tour held back, if any
-
-// Compatibility.m: a Spotify other than SGSupportedSpotifyVersion, or EeveeSpotify injected alongside.
-// Each gets an alert once and a red row at the top of Mod Settings.
-NSArray<SGModRow *> *SGCompatibilityWarningRows(void);   // empty when neither
-void SGCheckCompatibilityOnce(void);
-
-// Certificate.m: how this copy is signed, from the provisioning profile inside the app, and for a free
-// Apple ID's 7-day signature a sheet now and then offering a certificate, worded by spoti.pw.
+// Certificate.m: 只读读取 provisioning profile 的签名类型。
 NSString *SGCertificateKind(void);   // "free", "paid", "enterprise", "none" (no profile), nil if unreadable
-NSDate *SGCertificateExpiry(void);
-SGModRow *SGCertificateRow(void);    // nil unless signed with a free Apple ID
-void SGWatchForCertificate(void);
-BOOL SGCertificateOfferShown(void);  // this run, so the donate sheet stays out of its way
-void SGShowCertificateSheet(NSDictionary *offer, UIImage *logo);   // the sheet itself, for harness/donate too
 
 // Backup.m: the settings out to a JSON file through the share sheet, and back in from one, replacing
 // what is set and restarting.

@@ -134,16 +134,10 @@ static NSArray<SGUpdateRelease *> *releasesToShow(void) {
     SGUpdateRelease *newest = SGUpdateNewestRelease();
     if (SGUpdateVersion() && newest.url.length)
         [top addObject:linkRow([@"获取 " stringByAppendingString:newest.version],
-                               @"The release on GitHub, where its .deb is", @"arrow.down.circle", newest.url)];
+                               @"在 GitHub 上查看该版本的 .deb", @"arrow.down.circle", newest.url)];
     [top addObject:linkRow(@"全部版本", @"查看当前及此前的所有版本",
                            @"clock.arrow.circlepath", [SGRepoURL stringByAppendingString:@"/releases"])];
     [groups addObject:group(nil, top)];
-
-    SGUpdateRow *notice = [SGUpdateRow new];
-    notice.title = @"自动检查更新";
-    notice.symbol = @"bell";
-    notice.key = SGKeyUpdateNotice;
-    [groups addObject:group(nil, @[notice])];
 
     for (SGUpdateRelease *release in releasesToShow()) {
         NSMutableArray<NSString *> *kinds = [NSMutableArray array];
@@ -170,7 +164,7 @@ static NSArray<SGUpdateRelease *> *releasesToShow(void) {
                                      date.length ? [@" · " stringByAppendingString:date] : @""], @[empty])];
             continue;
         }
-        [kinds enumerateObjectsUsingBlock:^(NSString *kind, NSUInteger i, BOOL *stop) {
+        [kinds enumerateObjectsUsingBlock:^(NSString *kind, NSUInteger i, __unused BOOL *stop) {
             // The date goes on the first heading of a release, so several releases read as dated blocks.
             NSString *title = [NSString stringWithFormat:@"%@ · %@%@", release.version, kind,
                                i == 0 && date.length ? [@" · " stringByAppendingString:date] : @""];

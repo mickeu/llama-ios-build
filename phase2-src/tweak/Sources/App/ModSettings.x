@@ -27,7 +27,6 @@
 #import "Shared/AudioEffects/AudioEffectsPage.h"
 #import "Shared/LiveActivity/LiveActivity.h"
 #import "App/About/About.h"
-#import "App/Donate/Donate.h"
 #import "Pages.h"
 
 static const CGFloat kRowHeight = 56;
@@ -271,9 +270,4 @@ static SGModSettingsRow *ensureDrawerRow(UICollectionView *list) {
     %init;
     SGRequireClasses(@[@"_TtC21Settings_PlatformImpl26SettingsListViewController", @"_TtC23SideDrawer_ListPageImpl18ListViewController"]);
     SGRegisterPages();
-    SGCheckCompatibilityOnce();
-    SGCheckSigningOnce();
-    SGWatchForUpdates();
-    SGWatchForDonate();
-    SGWatchForCertificate();
 }

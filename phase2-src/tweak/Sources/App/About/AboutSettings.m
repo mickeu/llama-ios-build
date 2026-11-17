@@ -20,7 +20,7 @@ static void resetAll(void) {
 
 static void confirmReset(void) {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"重置所有设置？"
-                                                                  message:@"Every switch goes off, flag overrides and the tab bar layout are cleared, and Spotify restarts as it came, with the mod doing nothing until asked. Spotify's own settings are untouched."
+                                                                  message:@"所有开关将关闭，功能标记覆盖与标签栏布局将被清除，Spotify 会重启并恢复原始状态，插件不再主动生效。Spotify 自身设置不受影响。"
                                                            preferredStyle:UIAlertControllerStyleAlert];
     [alert addAction:[UIAlertAction actionWithTitle:@"重置并重启" style:UIAlertActionStyleDestructive handler:^(__unused UIAlertAction *action) { resetAll(); }]];
     [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
@@ -43,7 +43,7 @@ UIViewController *SGAboutPage(void) {
     updates.value = ^NSString *{ return SGUpdateStatus(); };
     NSMutableArray<SGModSection *> *sections = [NSMutableArray arrayWithObject:SGSection(nil, @[
         updates,
-        SGStatRow(@"Version", ^NSString *{ return @(SG_VERSION); }),
+        SGStatRow(@"版本", ^NSString *{ return @(SG_VERSION); }),
         SGStatRow(@"Spotify", ^NSString *{ return spotify; }),
     ])];
     SGModRow *appIcon = SGAppIconRow();
