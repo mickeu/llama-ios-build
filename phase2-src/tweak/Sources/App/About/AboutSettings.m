@@ -38,11 +38,7 @@ UIViewController *SGAboutPage(void) {
     SGModRow *reset = withSymbol(SGActionRow(@"重置所有设置", nil, ^{ confirmReset(); }), @"trash");
     reset.color = SGRed();
     NSString *spotify = [NSBundle.mainBundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"] ?: @"unknown";
-    // The row reads out where the build stands and opens the changelog of everything newer than it.
-    SGModRow *updates = SGPageRow(@"更新", ^UIViewController *{ return SGUpdatePage(); });
-    updates.value = ^NSString *{ return SGUpdateStatus(); };
     NSMutableArray<SGModSection *> *sections = [NSMutableArray arrayWithObject:SGSection(nil, @[
-        updates,
         SGStatRow(@"版本", ^NSString *{ return @(SG_VERSION); }),
         SGStatRow(@"Spotify", ^NSString *{ return spotify; }),
     ])];

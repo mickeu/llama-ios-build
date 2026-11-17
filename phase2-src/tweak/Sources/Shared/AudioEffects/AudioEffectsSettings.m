@@ -149,7 +149,7 @@ NSArray<NSString *> *SGDSPConvolverModeNames(void) {
 }
 
 NSArray<NSString *> *SGDSPCrossfeedModeNames(void) {
-    return @[@"Jan Meier (650 Hz, 9.5 dB)", @"Chu Moy (700 Hz, 6 dB)", @"Default (700 Hz, 4.5 dB)"];
+    return @[@"Jan Meier (650 Hz, 9.5 dB)", @"Chu Moy (700 Hz, 6 dB)", @"默认 (700 Hz, 4.5 dB)"];
 }
 
 NSArray<NSString *> *SGDSPReverbPresetNames(void) {

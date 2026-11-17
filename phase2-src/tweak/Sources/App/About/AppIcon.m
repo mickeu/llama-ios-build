@@ -144,8 +144,8 @@ static void SGIconPreloadAllPreviews(NSArray<NSString *> *keys, dispatch_block_t
 }
 
 @interface SGAppIconPage : SGPage @end
-@implementation SGAppIconPage { NSArray<NSString *> *_keys; UIView *_footer; }
-- (instancetype)init { if (!(self = [super initWithStyle:UITableViewStyleInsetGrouped])) return nil; _keys = SGIcons().keys; self.title = @"切换图标"; _footer = SGNote(@"每次切换后，系统会显示确认提示。选择“恢复默认图标”可恢复 Spotify 原图标。"); return self; }
+@implementation SGAppIconPage { NSArray<NSString *> *_keys; UIView *_footer; NSString *_selectedKey; }
+- (instancetype)init { if (!(self = [super initWithStyle:UITableViewStyleInsetGrouped])) return nil; _keys = SGIcons().keys; _selectedKey = UIApplication.sharedApplication.alternateIconName; self.title = @"切换图标"; _footer = SGNote(@"每次切换后，系统会显示确认提示。选择“恢复默认图标”可恢复 Spotify 原图标。"); return self; }
 - (void)viewDidLoad { [super viewDidLoad]; (void)SGIconPreviewScale(); self.tableView.tableFooterView = _footer; [self SGPreloadPreviews]; }
 - (void)viewWillAppear:(BOOL)animated { [super viewWillAppear:animated]; [self.tableView reloadData]; }
 - (void)viewWillLayoutSubviews { [super viewWillLayoutSubviews]; SGFitNote(self.tableView, _footer, 16, 24); }
@@ -168,19 +168,25 @@ static void SGIconPreloadAllPreviews(NSArray<NSString *> *keys, dispatch_block_t
     UIListContentConfiguration *content = [(UIListContentConfiguration *)cell.contentConfiguration copy];
     content.image = SGIconCachedPreview(key); content.imageProperties.maximumSize = CGSizeMake(44, 44); content.imageProperties.reservedLayoutSize = CGSizeMake(44, 44); content.imageToTextPadding = 14; cell.contentConfiguration = content;
     cell.selectionStyle = UITableViewCellSelectionStyleDefault;
-    NSString *current = UIApplication.sharedApplication.alternateIconName;
     cell.accessoryView = nil;
-    if ((!key && !current.length) || [key isEqualToString:current]) { UIImageView *tick = SGSymbolView(@"checkmark", 13, UIImageSymbolWeightSemibold, 16); tick.tintColor = SGGreen(); cell.accessoryView = tick; }
+    if ((!key && !_selectedKey.length) || [key isEqualToString:_selectedKey]) { UIImageView *tick = SGSymbolView(@"checkmark", 13, UIImageSymbolWeightSemibold, 16); tick.tintColor = SGGreen(); cell.accessoryView = tick; }
     return cell;
 }
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)path {
-    [table deselectRowAtIndexPath:path animated:YES]; NSString *key = [self SGKeyAtPath:path]; NSString *current = UIApplication.sharedApplication.alternateIconName;
-    if ((!key && !current.length) || [key isEqualToString:current]) return;
+    [table deselectRowAtIndexPath:path animated:YES]; NSString *key = [self SGKeyAtPath:path];
+    if ((!key && !_selectedKey.length) || [key isEqualToString:_selectedKey]) return;
     __weak typeof(self) weakSelf = self;
     [UIApplication.sharedApplication setAlternateIconName:key completionHandler:^(NSError *error) { dispatch_async(dispatch_get_main_queue(), ^{
-        [weakSelf.tableView reloadData]; if (!error) return;
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"图标切换失败" message:error.localizedDescription preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleCancel handler:nil]]; [SGTopController() presentViewController:alert animated:YES completion:nil];
+        __strong typeof(weakSelf) self = weakSelf;
+        if (!self) return;
+        if (error) {
+            [self.tableView reloadData];
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"图标切换失败" message:error.localizedDescription preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleCancel handler:nil]]; [SGTopController() presentViewController:alert animated:YES completion:nil];
+            return;
+        }
+        self->_selectedKey = key;
+        [self.tableView reloadData];
     }); }];
 }
 @end

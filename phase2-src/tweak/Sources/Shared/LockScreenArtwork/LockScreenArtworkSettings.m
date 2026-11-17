@@ -16,8 +16,8 @@ static void sayWhatIsMissing(void) {
 
 static NSArray<SGOrderItem *> *sources(void) {
     return @[
-        SGOrderItemMake(SGArtworkSourceSpotify, @"Spotify Canvas", @"The track's own clip"),
-        SGOrderItemMake(SGArtworkSourceApple, @"Apple Music", @"The album's animated cover"),
+        SGOrderItemMake(SGArtworkSourceSpotify, @"Spotify Canvas", @"曲目自带的视频片段"),
+        SGOrderItemMake(SGArtworkSourceApple, @"Apple Music", @"专辑的动态封面"),
     ];
 }
 
@@ -42,7 +42,7 @@ NSArray<SGModRow *> *SGAnimatedArtworkRows(void) {
     if (!SGAnimatedArtworkAvailable())
         return @[SGStatActionRow(@"动态锁屏封面", nil, ^NSString *{ return @"需要 iOS 26"; }, ^{ sayWhatIsMissing(); })];
     SGModRow *order = SGArtworkSourcesRow(SGKeyLockScreenArtworkSources,
-        @"Asked top to bottom until one has a clip. Apple Music gets only the artist and album name.");
+        @"将按从上到下的顺序尝试，直到找到视频片段。Apple Music 仅会获得艺人名和专辑名。");
     order.visible = ^BOOL { return SGFlag(SGKeyLockScreenArtwork, YES); };
     return @[
         SGSwitchRow(@"Animated lock screen", @"锁屏控制项后的动态封面", SGKeyLockScreenArtwork),

@@ -145,9 +145,9 @@ static NSArray<SGDSPEffect *> *effects(void) {
             width,
         ]),
         effect(SGKeyDSPCrossfeed, @"串音", @"让耳机立体声更柔和", @"ear", @[
-            choice(@"Preset", SGKeyDSPCrossfeedMode, SGDSPCrossfeedModeNames()),
+            choice(@"预设", SGKeyDSPCrossfeedMode, SGDSPCrossfeedModeNames()),
         ]),
-        effect(SGKeyDSPTube, @"Analog modelling", @"Tube amplifier warmth", @"flame", @[
+        effect(SGKeyDSPTube, @"模拟建模", @"电子管放大器的温暖音色", @"flame", @[
             slider(@"Drive", SGKeyDSPTubeDrive, @" dB"),
         ]),
     ];
@@ -433,10 +433,10 @@ static UIView *valueAndChevron(NSString *text) {
 // The libraries two of the effects run on, in the grey of a note with the names as links.
 - (void)buildCredits {
     NSDictionary *grey = @{NSFontAttributeName: SGSubtitleFont(), NSForegroundColorAttributeName: SGGrey()};
-    NSMutableAttributedString *text = [[NSMutableAttributedString alloc] initWithString:@"Crossfeed is " attributes:grey];
+    NSMutableAttributedString *text = [[NSMutableAttributedString alloc] initWithString:@"串音基于 " attributes:grey];
     NSArray<NSArray<NSString *> *> *parts = @[
-        @[@"libbs2b", @"https://github.com/alexmarsev/libbs2b"], @[@" by Boris Mikhaylov. Liveprog runs on ", @""],
-        @[@"EEL2", @"https://github.com/justinfrankel/WDL"], @[@", from Cockos' WDL.", @""],
+        @[@"libbs2b", @"https://github.com/alexmarsev/libbs2b"], @[@"，作者 Boris Mikhaylov。Liveprog 运行于 ", @""],
+        @[@"EEL2", @"https://github.com/justinfrankel/WDL"], @[@"，来自 Cockos 的 WDL。", @""],
     ];
     for (NSArray<NSString *> *part in parts) {
         NSMutableDictionary *attributes = [grey mutableCopy];

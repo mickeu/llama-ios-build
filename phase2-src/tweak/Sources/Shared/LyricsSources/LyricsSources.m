@@ -175,12 +175,12 @@ NSArray<SGLyricsProvider *> *SGLyricsAllProviders(void) {
             return provider;
         };
         all = @[
-            make(@"spicylyrics", @"Spicy Lyrics", @"Community syncs, word timing", SGSpicyLyricsAsk),
-            make(@"binilyrics", @"BiniLyrics", @"Apple Music word timing", SGBiniLyricsAsk),
-            make(@"musixmatch", @"Musixmatch", @"Spotify's licensed catalogue", SGMusixmatchAsk),
-            make(@"unison", @"Unison", @"Hand-timed, few tracks", SGUnisonAsk),
-            make(@"netease", @"NetEase", @"Word timing, censored", SGNetEaseAsk),
-            make(@"lrclib", @"LRCLIB", @"Line timing, open fallback", SGLrcLibAsk),
+            make(@"spicylyrics", @"Spicy Lyrics", @"社区同步，逐词时间轴", SGSpicyLyricsAsk),
+            make(@"binilyrics", @"BiniLyrics", @"Apple Music 逐词时间轴", SGBiniLyricsAsk),
+            make(@"musixmatch", @"Musixmatch", @"Spotify 授权的歌词库", SGMusixmatchAsk),
+            make(@"unison", @"Unison", @"手工计时，曲目较少", SGUnisonAsk),
+            make(@"netease", @"NetEase", @"逐词时间轴，敏感词打码", SGNetEaseAsk),
+            make(@"lrclib", @"LRCLIB", @"逐行时间轴，开放兜底", SGLrcLibAsk),
         ];
     });
     return all;

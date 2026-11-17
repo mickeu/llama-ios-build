@@ -37,8 +37,6 @@ static SGModRow *pageRow(NSString *title, NSString *symbol, UIViewController *(^
 }
 
 static UIViewController *modSettingsPage(void) {
-    // Opening the page is the only thing that asks; the cache keeps it to once every six hours.
-    SGCheckForUpdate(NO);
     NSMutableArray<SGModSection *> *sections = [NSMutableArray array];
     // 首页只保留功能入口；兼容性、签名、捐赠、社群与证书提示均不占用页面或主动打扰用户。
     SGModRow *mod = pageRow(@"插件信息", @"info.circle", ^UIViewController *{ return SGAboutPage(); });

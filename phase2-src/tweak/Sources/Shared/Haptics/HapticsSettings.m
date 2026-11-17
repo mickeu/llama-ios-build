@@ -7,16 +7,16 @@
 #import "Settings/SGModPage.h"
 #import "Haptics.h"
 
-static NSString *const kMusicHapticsInfo = @"The iPhone taps along with the drums and rumbles under the bass of whatever Spotify is playing, worked out from the sound as it plays, much like Music Haptics in Apple Music.\n\nIt follows the sound this iPhone plays, through its speaker or headphones, while Spotify is open: iOS plays no haptics for an app in the background, and a song playing on another device through Connect has no sound here to follow.";
+static NSString *const kMusicHapticsInfo = @"iPhone 会跟随 Spotify 正在播放的声音，随鼓点轻敲、随低音震动，效果类似 Apple Music 的“音乐触感”。\n\n它跟随此 iPhone 通过扬声器或耳机播放的声音，且仅在 Spotify 打开时生效：iOS 不会为后台应用播放触感，通过 Connect 在另一台设备播放的歌曲在此处也没有可跟随的声音。";
 
 static NSArray<NSString *> *followsNames(void) {
     return @[@"全部", @"节拍", @"低音"];
 }
 
 static NSArray<NSString *> *followsNotes(void) {
-    return @[@"A tap on each kick and snare, and a rumble under the bass",
-             @"A tap on each kick and snare, no rumble",
-             @"A tap on each kick, and a rumble under the bass"];
+    return @[@"每个底鼓和军鼓各一次轻敲，低音下方有震动",
+             @"每个底鼓和军鼓各一次轻敲，无震动",
+             @"每个底鼓一次轻敲，低音下方有震动"];
 }
 
 static void strengthRange(NSString *key, NSInteger *minimum, NSInteger *maximum) {
@@ -57,15 +57,15 @@ NSArray<SGModSection *> *SGVibrationsSections(void) {
     });
     controlStrength.visible = ^BOOL { return SGEnabled(SGKeyControlHaptics); };
 
-    SGModRow *music = SGOptionRow(@"Music Haptics", nil, SGKeyMusicHaptics);
+    SGModRow *music = SGOptionRow(@"音乐触感", nil, SGKeyMusicHaptics);
     music.info = kMusicHapticsInfo;
     music.changed = ^(BOOL on) { SGSetMusicHapticsEnabled(on); };
     BOOL (^musicOn)(void) = ^BOOL { return SGFlag(SGKeyMusicHaptics, NO); };
     SGModRow *musicStrength = strengthRow(SGKeyMusicStrength, ^{ SGMusicHapticsSettingsChanged(); });
     musicStrength.visible = musicOn;
-    SGModRow *follows = SGChoiceRow(@"Follows", nil, SGKeyMusicFollows, followsNames(), SGMusicFollowsEverything);
+    SGModRow *follows = SGChoiceRow(@"跟随", nil, SGKeyMusicFollows, followsNames(), SGMusicFollowsEverything);
     follows.choiceNotes = followsNotes();
-    follows.chosen = ^(NSInteger index) { SGMusicHapticsSettingsChanged(); };
+    follows.chosen = ^(__unused NSInteger index) { SGMusicHapticsSettingsChanged(); };
     follows.visible = musicOn;
 
     return @[
