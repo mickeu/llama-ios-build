@@ -1,0 +1,81 @@
+name: SpotifyGlass Phase 2 Components
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 45
+    env:
+      THEOS: ${{ github.workspace }}/theos
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - uses: actions/checkout@v4
+        with:
+          repository: theos/theos
+          ref: 8167f59de02fd32cf45b16bfcb1330dfa5c9974c
+          path: theos
+          submodules: recursive
+
+      - name: Prepare build tools
+        run: brew install make dpkg
+
+      - name: Audit source boundary
+        run: |
+          cd phase2-src
+          test -f tweak/Makefile
+          test -f extension/LiveActivity/LiveActivityWidget.swift
+          test -f tweak/Sources/Shared/LiveActivity/LiveActivityShared.swift
+          ! find . -type f \( -name '*.ipa' -o -name '*.p12' -o -name '*.mobileprovision' -o -name '*.pem' -o -name '*.key' \) -print -quit | grep -q .
+
+      - name: Build unique SpotifyGlass host dylib
+        run: |
+          cd phase2-src
+          mkdir -p dist
+          set -o pipefail
+          if ! env -u MAKELEVEL gmake -C tweak clean package FINALPACKAGE=1 TARGET_CODESIGN= ADDITIONAL_LDFLAGS='-Wl,-headerpad_max_install_names -Wl,-no_adhoc_codesign' -j3 > dist/host-build.log 2>&1; then
+            tail -120 dist/host-build.log
+            exit 1
+          fi
+          BIN=$(find tweak/.theos -type f -name spotifyglass.dylib | head -1)
+          test -s "$BIN"
+          cp "$BIN" dist/spotifyglass.dylib
+          xcrun install_name_tool -id @rpath/spotifyglass.dylib dist/spotifyglass.dylib
+          codesign -s - --force dist/spotifyglass.dylib
+          xcrun otool -L dist/spotifyglass.dylib > dist/spotifyglass.dependencies.txt
+
+      - name: Build unique Live Activity appex
+        run: |
+          cd phase2-src
+          mkdir -p dist/extension
+          cp extension/LiveActivity/Info.plist dist/host-info.plist
+          /usr/libexec/PlistBuddy -c 'Set :CFBundleIdentifier com.spotify.client' dist/host-info.plist
+          /usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString 9.2.0' dist/host-info.plist
+          /usr/libexec/PlistBuddy -c 'Set :CFBundleVersion 920002054' dist/host-info.plist
+          bash scripts/build-extension.sh dist/host-info.plist dist/extension
+          test -s dist/extension/SpotifyGlassLiveActivity.appex/SpotifyGlassLiveActivity
+          test -f dist/extension/app/Metadata.appintents/extract.actionsdata
+
+      - name: Verify component invariants
+        run: |
+          cd phase2-src
+          test "$(find dist -type f -name 'spotifyglass*.dylib' | wc -l | tr -d ' ')" = 1
+          test "$(find dist/extension -type d -name 'SpotifyGlassLiveActivity.appex' | wc -l | tr -d ' ')" = 1
+          shasum -a 256 dist/spotifyglass.dylib dist/extension/SpotifyGlassLiveActivity.appex/SpotifyGlassLiveActivity > dist/SHA256SUMS.txt
+          plutil -p dist/extension/SpotifyGlassLiveActivity.appex/Info.plist > dist/appex-info.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SpotifyGlass-phase2-components
+          path: phase2-src/dist/
+          if-no-files-found: error
+          retention-days: 3
