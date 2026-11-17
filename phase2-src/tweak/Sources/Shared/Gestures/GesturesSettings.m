@@ -201,7 +201,7 @@ static NSString *cellLabel(SGGestureAction action) {
         case 2: {
             BOOL split = path.section == 1;
             NSString *title = split ? SGGestureSplitNames()[(NSUInteger)path.row]
-                                    : [NSString stringWithFormat:@"%@ seconds", SGGestureStepChoices()[(NSUInteger)path.row]];
+                                    : [NSString stringWithFormat:@"%@ 秒", SGGestureStepChoices()[(NSUInteger)path.row]];
             SGFillCell(cell, title, nil, nil, nil);
             cell.selectionStyle = UITableViewCellSelectionStyleDefault;
             if (path.row == (split ? SGGestureSplit() : SGGestureStepChoice())) {
@@ -212,7 +212,7 @@ static NSString *cellLabel(SGGestureAction action) {
             break;
         }
         default:
-            SGFillCell(cell, @"Start over", nil, nil, @"arrow.uturn.backward");
+            SGFillCell(cell, @"从头开始", nil, nil, @"arrow.uturn.backward");
             cell.selectionStyle = UITableViewCellSelectionStyleDefault;
             break;
     }

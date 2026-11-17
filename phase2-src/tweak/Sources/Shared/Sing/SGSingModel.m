@@ -10,7 +10,7 @@ NSNotificationName const SGSingModelDidChangeNotification = @"spotifyglass.singM
 // The model host: a Hugging Face repository holding the compiled model's files at the paths below. A test
 // build serves them itself and keeps them somewhere of its own (harness/sing/model_test.m).
 #ifndef SGSingModelBase
-#define SGSingModelBase @"https://huggingface.co/Darkkos/spoti-sing/resolve/main/"
+#define SGSingModelBase @"https://github.com/mickeu/spoti-sing-model/releases/download/v1.0.0/"
 #endif
 #ifndef SGSingModelRoot
 #define SGSingModelRoot nil
@@ -20,10 +20,10 @@ NSNotificationName const SGSingModelDidChangeNotification = @"spotifyglass.singM
 // files, at these sizes and with these hashes, ever become the model; the largest comes first.
 static const struct { const char *path; int64_t size; const char *sha256; } kFiles[] = {
     {"weights/weight.bin", 488986336, "970a99fb4b15724bf76d2918ceb177df592c69265d3e2fabaab6e5ba72738e62"},
-    {"model.mil", 669061, "966560ed5125174a98f19b94f5de04450a7112ade0e731f2236c202c0280a623"},
-    {"metadata.json", 2431, "52a8d5e3f09e33236d495dbed5bbce1c75bac6f2a6b6097637cf214f37c1de53"},
-    {"coremldata.bin", 507, "2090acaf7a6df72ec83857cb88d101654023a6baad222a25d0173827d3347e28"},
-    {"analytics/coremldata.bin", 243, "f7ee4ec9b5cc1c97171bd5aad93af61e183aa0db1451ef3b775bd4e77f0b7cfd"},
+    {"model.mil", 669060, "c612ac3798e1ce0f89603453ff72ca78bf4f1b07701925afa726ffce4c6e3ecb"},
+    {"metadata.json", 2416, "af098e7f6b0af360cb2d5df7c3059fe83e3e2f38c27e3f67c875417c8d9d4102"},
+    {"coremldata.bin", 507, "5ff2c235fcf4e153f1ea47ee9939132ebad276dc7509fc1069b45f7ef8c0207d"},
+    {"analytics/coremldata.bin", 243, "9a949d4e0b28ab778d750f30ec3bb120b22a8c01ef8dce25f11b0832d6d5fe39"},
 };
 enum { kFileCount = sizeof kFiles / sizeof *kFiles };
 
@@ -48,6 +48,12 @@ static NSTimeInterval sg_lastPost;
 #pragma mark - the files
 
 static NSString *pathOf(int i) { return @(kFiles[i].path); }
+
+// 下载 URL 用平铺的 Release 附件名；本地仍按 mlmodelc 目录结构保存。
+static NSString *remoteNameOf(int i) {
+    static NSString *names[] = { @"weight.bin", @"model.mil", @"metadata.json", @"coremldata.bin", @"analytics-coremldata.bin" };
+    return names[i];
+}
 
 static NSURL *singFolder(void) {
     static NSURL *folder;
@@ -157,7 +163,7 @@ static void stopTasks(BOOL keep) {
     sg_want = NO;
     [NSUserDefaults.standardUserDefaults removeObjectForKey:SGKeySingModelDownload];
     NSUInteger epoch = sg_epoch;
-    [sg_tasks enumerateKeysAndObjectsUsingBlock:^(NSNumber *key, NSURLSessionDownloadTask *task, BOOL *stop) {
+    [sg_tasks enumerateKeysAndObjectsUsingBlock:^(NSNumber *key, NSURLSessionDownloadTask *task, __unused BOOL *stop) {
         int i = key.intValue;
         if (!keep) { [task cancel]; return; }
         [task cancelByProducingResumeData:^(NSData *data) {
@@ -190,7 +196,7 @@ static void startFile(int i) {
     }
     sg_fromResume[i] = task != nil;
     if (!task) {
-        NSURL *url = [NSURL URLWithString:pathOf(i) relativeToURL:[NSURL URLWithString:SGSingModelBase]];
+        NSURL *url = [NSURL URLWithString:remoteNameOf(i) relativeToURL:[NSURL URLWithString:SGSingModelBase]];
         NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url.absoluteURL];
         request.allowsExpensiveNetworkAccess = sg_metered;
         request.allowsConstrainedNetworkAccess = sg_metered;
@@ -226,7 +232,7 @@ static void installIfComplete(void) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (epoch != sg_epoch || !sg_want) return;
             if (!moved) { fail([NSString stringWithFormat:@"The voice model could not be put in place: %@", error.localizedDescription]); return; }
-            SGLog(@"Sing voice model installed");
+            SGLog(@"Sing voice model %@", @"installed");
             sg_want = NO;
             [NSUserDefaults.standardUserDefaults removeObjectForKey:SGKeySingModelDownload];
             sg_installed = YES;
@@ -449,7 +455,7 @@ void SGSingModelCancel(void) {
 
 void SGSingModelRemove(void) {
     load();
-    SGLog(@"Sing voice model removed");
+    SGLog(@"Sing voice model %@", @"removed");
     sg_epoch++;
     stopTasks(NO);
     sg_installed = NO;

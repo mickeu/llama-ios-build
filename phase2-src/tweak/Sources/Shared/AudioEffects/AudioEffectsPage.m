@@ -110,41 +110,41 @@ static NSArray<SGDSPEffect *> *effects(void) {
     SGDSPRow *width = slider(@"Width", SGKeyDSPStereoWideLevel, @"%");
     width.scale = 2;
     return @[
-        effect(nil, @"Output control", @"Gain and limiter, always on", @"speaker.wave.2", @[
-            slider(@"Post gain", SGKeyDSPPostGain, @" dB"),
-            slider(@"Limiter threshold", SGKeyDSPLimiterThreshold, @" dB"),
-            slider(@"Limiter release", SGKeyDSPLimiterRelease, @" ms"),
+        effect(nil, @"输出控制", @"增益与限制器，始终开启", @"speaker.wave.2", @[
+            slider(@"后级增益", SGKeyDSPPostGain, @" dB"),
+            slider(@"限制器阈值", SGKeyDSPLimiterThreshold, @" dB"),
+            slider(@"限制器释放时间", SGKeyDSPLimiterRelease, @" ms"),
         ]),
-        effect(SGKeyDSPCompander, @"Multiband compander", @"Evens out or livens up the dynamics", @"rectangle.compress.vertical", @[
+        effect(SGKeyDSPCompander, @"多段压缩扩展器", @"均衡或增强动态", @"rectangle.compress.vertical", @[
             row(SGDSPRowCurve, nil, SGKeyDSPCompanderGains),
             slider(@"Release", SGKeyDSPCompanderTime, @" s"),
         ]),
         effect(SGKeyDSPBass, @"低音增强", @"增强低频", @"hifispeaker", @[
             slider(@"Maximum gain", SGKeyDSPBassGain, @" dB"),
         ]),
-        effect(SGKeyDSPEqualizer, @"Equalizer", @"15 bands, with presets", @"slider.vertical.3", @[
+        effect(SGKeyDSPEqualizer, @"均衡器", @"15 段，带预设", @"slider.vertical.3", @[
             row(SGDSPRowCurve, nil, SGKeyDSPEqualizerGains),
         ]),
-        effect(SGKeyDSPGraphicEq, @"Graphic EQ", @"Any curve, like AutoEq's corrections", @"chart.xyaxis.line", @[
+        effect(SGKeyDSPGraphicEq, @"图形均衡器", @"任意曲线，如 AutoEq 的校正", @"chart.xyaxis.line", @[
             pageRow(@"Response", ^NSString *{ return graphicEqSummary(); }, ^UIViewController *{ return SGDSPGraphicEqPage(); }),
         ]),
-        effect(SGKeyDSPConvolver, @"Convolver", @"Recorded rooms and speakers", @"waveform.path", @[
+        effect(SGKeyDSPConvolver, @"卷积混响", @"录制的房间与扬声器", @"waveform.path", @[
             fileRow(@"Impulse response", SGDSPFileImpulseResponse),
             choice(@"Optimization", SGKeyDSPConvolverMode, SGDSPConvolverModeNames()),
         ]),
-        effect(SGKeyDSPDDC, @"ViPER DDC", @"Headphone correction files", @"headphones", @[
+        effect(SGKeyDSPDDC, @"ViPER DDC", @"耳机校正文件", @"headphones", @[
             fileRow(@"DDC file", SGDSPFileDDC),
         ]),
-        effect(SGKeyDSPLiveprog, @"Liveprog", @"Effects written as EEL scripts", @"chevron.left.forwardslash.chevron.right", @[
+        effect(SGKeyDSPLiveprog, @"Liveprog", @"以 EEL 脚本编写的音效", @"chevron.left.forwardslash.chevron.right", @[
             fileRow(@"Script", SGDSPFileLiveprog),
         ]),
-        effect(SGKeyDSPReverb, @"Reverb", @"A room around the music", @"building.columns", @[
+        effect(SGKeyDSPReverb, @"混响", @"围绕音乐的房间感", @"building.columns", @[
             choice(@"Room", SGKeyDSPReverbPreset, SGDSPReverbPresetNames()),
         ]),
-        effect(SGKeyDSPStereoWide, @"Stereo widening", @"A wider or narrower stereo image", @"arrow.left.and.right", @[
+        effect(SGKeyDSPStereoWide, @"立体声扩展", @"更宽或更窄的立体声声像", @"arrow.left.and.right", @[
             width,
         ]),
-        effect(SGKeyDSPCrossfeed, @"Crossfeed", @"Softer stereo on headphones", @"ear", @[
+        effect(SGKeyDSPCrossfeed, @"串音", @"让耳机立体声更柔和", @"ear", @[
             choice(@"Preset", SGKeyDSPCrossfeedMode, SGDSPCrossfeedModeNames()),
         ]),
         effect(SGKeyDSPTube, @"Analog modelling", @"Tube amplifier warmth", @"flame", @[

@@ -534,7 +534,7 @@ NSString *SGDSPStatus(void) {
     if (atomic_load(&sg_outputState) == SGOutputUnsupported) return @"Spotify's output is in a format the engine does not take";
     SGDSPEngine *engine = atomic_load(&sg_engine);
     if (!SGAudioPipelineAvailable()) return @"Unavailable: Spotify's output could not be reached";
-    if (!engine || !atomic_load(&sg_running)) return @"Waiting for Spotify to play";
+    if (!engine || !atomic_load(&sg_running)) return @"等待 Spotify 播放";
     double rate = SGDSPEngineSampleRate(engine);
     double load = SGDSPEngineReadStats(engine, false).load;
     return [NSString stringWithFormat:@"Running at %@ kHz, %.1f%% load", [NSString stringWithFormat:@"%g", rate / 1000], load * 100];

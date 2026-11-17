@@ -20,8 +20,8 @@ SGLyricsMeaningsLevel SGLyricsMeaningsShown(void) {
 
 SGModRow *SGLyricsMeaningsRow(void) {
     SGModRow *row = SGChoiceRow(@"逐行释义", nil, SGKeyLyricsMeanings,
-                                @[@"Off", @"From the artist", @"Artist and editors", @"Everyone"], SGLyricsMeaningsOff);
-    row.choiceFooter = @"Explanations from Genius. Tap the bubble after a line, or hold the line.";
+                                @[@"关闭", @"仅艺人释义", @"艺人和编辑释义", @"所有释义"], SGLyricsMeaningsOff);
+    row.choiceFooter = @"释义来自 Genius。轻点歌词行后的气泡，或长按该歌词行即可查看。";
     return row;
 }
 
