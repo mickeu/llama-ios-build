@@ -77,7 +77,6 @@ static UIViewController *modSettingsPage(void) {
             pageRow(@"实验室", @"testtube.2", ^UIViewController *{ return SGLabsPage(); }),
         ]),
         SGSection(nil, @[
-            pageRow(@"全部旗标", @"flag", ^UIViewController *{ return SGAllFlagsPage(); }),
             mod,
         ]),
     ]];

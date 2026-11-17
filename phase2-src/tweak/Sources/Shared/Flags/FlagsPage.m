@@ -27,7 +27,7 @@ static NSString *flagState(const SGFlagDef *flag, id value) {
 
 - (instancetype)init {
     if (!(self = [super initWithStyle:UITableViewStylePlain])) return nil;
-    self.title = @"旗标";
+    self.title = @"功能开关";
     return self;
 }
 
@@ -37,7 +37,7 @@ static NSString *flagState(const SGFlagDef *flag, id value) {
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
     _search = [UISearchBar new];
-    _search.placeholder = [NSString stringWithFormat:@"搜索 %lu 个旗标", (unsigned long)SGFlagCount];
+    _search.placeholder = [NSString stringWithFormat:@"搜索 %lu 个功能开关", (unsigned long)SGFlagCount];
     _search.searchBarStyle = UISearchBarStyleMinimal;
     _search.delegate = self;
     _header = SGNote(@"自动保持 Spotify 的值。重启 Spotify 后生效。");
