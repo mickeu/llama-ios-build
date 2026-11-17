@@ -1,0 +1,41 @@
+name: Recover SpotifyGlass Flag Table
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  recover:
+    runs-on: macos-15
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Decrypt existing complete source input
+        env:
+          BUILD_PASS: ${{ secrets.PLUGIN_BUILD_PASS }}
+        run: |
+          openssl enc -d -aes-256-cbc -pbkdf2 -in source.enc -out input.tar.gz -pass env:BUILD_PASS
+          mkdir source
+          tar -xzf input.tar.gz -C source
+          test -s source/tweak/Sources/Shared/Flags/SGFlagList.m
+
+      - name: Audit generated table boundary
+        run: |
+          TABLE=source/tweak/Sources/Shared/Flags/SGFlagList.m
+          test "$(wc -c < "$TABLE" | tr -d ' ')" -gt 10000
+          grep -q 'const SGFlagDef SGFlagTable' "$TABLE"
+          grep -q 'const NSUInteger SGFlagCount' "$TABLE"
+          ! grep -Eq '-----BEGIN .*PRIVATE KEY-----|gh[pousr]_[A-Za-z0-9_]{20,}' "$TABLE"
+          mkdir -p out
+          cp "$TABLE" out/SGFlagList.m
+          shasum -a 256 out/SGFlagList.m > out/SHA256SUMS.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SpotifyGlass-920-flag-table
+          path: out/
+          if-no-files-found: error
+          retention-days: 3

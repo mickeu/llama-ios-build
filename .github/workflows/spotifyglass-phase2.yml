@@ -14,6 +14,8 @@ jobs:
       THEOS: ${{ github.workspace }}/theos
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - uses: maxim-lobanov/setup-xcode@v1
         with:
@@ -36,6 +38,22 @@ jobs:
           test -f extension/LiveActivity/LiveActivityWidget.swift
           test -f tweak/Sources/Shared/LiveActivity/LiveActivityShared.swift
           ! find . -type f \( -name '*.ipa' -o -name '*.p12' -o -name '*.mobileprovision' -o -name '*.pem' -o -name '*.key' \) -print -quit | grep -q .
+
+      - name: Generate complete Spotify 9.2.0 flag table
+        run: |
+          cd phase2-src
+          mkdir -p dist
+          IPA=../phase2-input/Spotify-9.2.0-decrypted.ipa
+          test -s "$IPA"
+          test "$(shasum -a 256 "$IPA" | cut -d' ' -f1)" = 229df9d5eb184c730bfbdb3b9dcf4a2de01cc389facb037bad0aaa546571039e
+          unzip -p "$IPA" Payload/Spotify.app/Info.plist > dist/input-Info.plist
+          test "$(plutil -extract CFBundleIdentifier raw -o - dist/input-Info.plist)" = com.spotify.client
+          test "$(plutil -extract CFBundleShortVersionString raw -o - dist/input-Info.plist)" = 9.2.0
+          python3 scripts/extract-flags.py "$IPA"
+          test "$(wc -c < tweak/Sources/Shared/Flags/SGFlagList.m | tr -d ' ')" -gt 10000
+          grep -q 'const SGFlagDef SGFlagTable' tweak/Sources/Shared/Flags/SGFlagList.m
+          grep -q 'const NSUInteger SGFlagCount' tweak/Sources/Shared/Flags/SGFlagList.m
+          test "$(grep -Ec 'SGFlag(Bool|Int|Enum)' tweak/Sources/Shared/Flags/SGFlagList.m)" -gt 0
 
       - name: Build unique SpotifyGlass host dylib
         run: |
