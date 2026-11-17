@@ -116,9 +116,9 @@ typedef NS_ENUM(NSInteger, SGOrderSection) {
 }
 
 - (UIView *)tableView:(UITableView *)table viewForHeaderInSection:(NSInteger)section {
-    if (section == SGOrderSectionOn) return SGSectionHeader(table, _on.count ? @"Asked in this order" : @"None on");
+    if (section == SGOrderSectionOn) return SGSectionHeader(table, _on.count ? @"将按此顺序尝试" : @"未启用任何项");
     if (section == SGOrderSectionExtra) return self.extra.title ? SGSectionHeader(table, self.extra.title) : nil;
-    return _off.count ? SGSectionHeader(table, @"Off") : nil;
+    return _off.count ? SGSectionHeader(table, @"关闭") : nil;
 }
 
 - (CGFloat)tableView:(UITableView *)table heightForHeaderInSection:(NSInteger)section {

@@ -37,7 +37,7 @@ UIViewController *SGLicensesPage(void) {
     SGModRow *kawarp = SGLinkRow(@"Kawarp", @"Fluid artwork's renderer · MIT License", @"https://github.com/better-lyrics/kawarp");
     SGModRow *noise = SGLinkRow(@"webgl-noise", @"Fluid artwork's simplex noise · MIT License", @"https://github.com/ashima/webgl-noise");
     SGModRow *hash = SGLinkRow(@"Hash without Sine", @"Fluid artwork's dither · MIT License", @"https://www.shadertoy.com/view/4djSRW");
-    return [[SGModPage alloc] initWithTitle:@"Licenses" intro:@"The mod's own license, and the code from others it includes." sections:@[
+    return [[SGModPage alloc] initWithTitle:@"许可证" intro:@"插件自身的许可证，以及所包含第三方代码的许可证。" sections:@[
         SGSection(nil, @[mod]),
         SGNotedSection(nil, @[bs2b], [@"Copyright (c) 2005 Boris Mikhaylov\n\n" stringByAppendingString:kMIT]),
         SGNotedSection(nil, @[wdl], [@"Copyright (C) 2004-2013 Cockos Incorporated\nCopyright (C) 1999-2003 Nullsoft, Inc.\n\n"

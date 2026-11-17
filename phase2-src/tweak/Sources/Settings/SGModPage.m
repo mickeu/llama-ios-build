@@ -4,7 +4,7 @@
 #import "SGGlowSwitch.h"
 #import "Core/SGCore.h"
 
-NSString *const SGRestartNote = @"Changes apply after you restart Spotify.";
+NSString *const SGRestartNote = @"重启 Spotify 后生效。";
 
 @implementation SGModRow
 @end

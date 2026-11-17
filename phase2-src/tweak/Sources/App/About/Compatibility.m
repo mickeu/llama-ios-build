@@ -74,10 +74,8 @@ static void showWarning(SGIncompatibility *problem, void (^done)(void)) {
 }
 
 NSArray<SGModRow *> *SGCompatibilityWarningRows(void) {
-    NSMutableArray<SGModRow *> *rows = [NSMutableArray array];
-    for (SGIncompatibility *problem in incompatibilities())
-        [rows addObject:SGWarningRow(problem.title, problem.subtitle, ^{ showWarning(problem, nil); })];
-    return rows;
+    // 兼容性信息不再占用插件首页。
+    return @[];
 }
 
 // One alert at a time, the next after OK. A problem is stored only once its alert is up, so a run
@@ -103,17 +101,5 @@ static void warnWhenClear(NSArray<SGIncompatibility *> *pending, NSInteger tries
 }
 
 void SGCheckCompatibilityOnce(void) {
-    NSMutableArray<SGIncompatibility *> *pending = [NSMutableArray array];
-    for (SGIncompatibility *problem in incompatibilities()) {
-        SGLog(@"compatibility: %@", problem.title);
-        if (![[NSUserDefaults.standardUserDefaults stringForKey:problem.key] isEqualToString:problem.stamp]) [pending addObject:problem];
-    }
-    if (!pending.count) return;
-    __block id observer = [NSNotificationCenter.defaultCenter addObserverForName:UIApplicationDidBecomeActiveNotification
-                                                                          object:nil
-                                                                           queue:NSOperationQueue.mainQueue
-                                                                      usingBlock:^(NSNotification *note) {
-        [NSNotificationCenter.defaultCenter removeObserver:observer];
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kSettle * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{ warnWhenClear(pending, kTries); });
-    }];
+    // 不再显示兼容性自动弹窗。
 }

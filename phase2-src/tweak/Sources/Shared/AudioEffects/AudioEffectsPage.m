@@ -101,7 +101,7 @@ static NSString *graphicEqSummary(void) {
         points++;
         flat &= parts[1].doubleValue == 0;
     }
-    return flat ? @"Flat" : [NSString stringWithFormat:@"%lu points", (unsigned long)points];
+    return flat ? @"平直" : [NSString stringWithFormat:@"%lu 个控制点", (unsigned long)points];
 }
 
 // The effects' cards. The engine runs them in an order of its own (SGDSPEngine.m).
@@ -119,7 +119,7 @@ static NSArray<SGDSPEffect *> *effects(void) {
             row(SGDSPRowCurve, nil, SGKeyDSPCompanderGains),
             slider(@"Release", SGKeyDSPCompanderTime, @" s"),
         ]),
-        effect(SGKeyDSPBass, @"Bass boost", @"Lifts the low end", @"hifispeaker", @[
+        effect(SGKeyDSPBass, @"低音增强", @"增强低频", @"hifispeaker", @[
             slider(@"Maximum gain", SGKeyDSPBassGain, @" dB"),
         ]),
         effect(SGKeyDSPEqualizer, @"Equalizer", @"15 bands, with presets", @"slider.vertical.3", @[
@@ -415,7 +415,7 @@ static UIView *valueAndChevron(NSString *text) {
 
 - (instancetype)init {
     if (!(self = [super initWithStyle:UITableViewStyleInsetGrouped])) return nil;
-    self.title = @"Audio effects";
+    self.title = @"音频效果";
     _effects = effects();
     _open = [NSMutableSet set];
     _errors = [NSMutableDictionary dictionary];
@@ -585,7 +585,7 @@ static UIView *valueAndChevron(NSString *text) {
     SGDSPEffect *e = [self effectIn:path.section];
     if (!e) {
         UITableViewCell *cell = SGDequeueCell(table, @"reset");
-        SGFillCell(cell, @"Reset all effects", nil, SGRed(), @"arrow.counterclockwise");
+        SGFillCell(cell, @"重置所有音效", nil, SGRed(), @"arrow.counterclockwise");
         UIListContentConfiguration *content = (UIListContentConfiguration *)cell.contentConfiguration;
         content.secondaryTextProperties.color = SGRed();
         cell.contentConfiguration = content;
@@ -650,7 +650,7 @@ static UIView *valueAndChevron(NSString *text) {
 // Red, the way Settings' warning rows are: the effect's last change did not take, and why.
 - (UITableViewCell *)errorCell:(UITableView *)table text:(NSString *)text {
     UITableViewCell *cell = SGDequeueCell(table, @"error");
-    SGFillCell(cell, @"Not applied", text, SGRed(), @"exclamationmark.triangle.fill");
+    SGFillCell(cell, @"未应用", text, SGRed(), @"exclamationmark.triangle.fill");
     UIListContentConfiguration *content = (UIListContentConfiguration *)cell.contentConfiguration;
     content.secondaryTextProperties.color = SGRed();
     cell.contentConfiguration = content;
@@ -701,7 +701,7 @@ static UIView *valueAndChevron(NSString *text) {
         for (NSInteger i = 1; i < MAX(before, after); i++) [paths addObject:[NSIndexPath indexPathForRow:i inSection:section]];
         if (after > before) [table insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationFade];
         else if (after < before) [table deleteRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationFade];
-    } completion:^(BOOL finished) {
+    } completion:^(__unused BOOL finished) {
         if (!toggle.on) return;
         CGRect card = [table rectForSection:section];
         CGFloat room = table.bounds.size.height - table.adjustedContentInset.top - table.adjustedContentInset.bottom;
@@ -714,7 +714,7 @@ static UIView *valueAndChevron(NSString *text) {
 - (void)tick {
     [self showStatus];
     UITableView *table = self.tableView;
-    [_effects enumerateObjectsUsingBlock:^(SGDSPEffect *e, NSUInteger i, BOOL *stop) {
+    [_effects enumerateObjectsUsingBlock:^(SGDSPEffect *e, NSUInteger i, __unused BOOL *stop) {
         if (![reportingEffects() containsObject:e.key] || ![self isOpen:e]) return;
         NSString *shown = self->_errors[e.key], *now = SGDSPError(e.key);
         if (shown == now || [shown isEqualToString:now]) return;
@@ -739,10 +739,10 @@ static UIView *valueAndChevron(NSString *text) {
 }
 
 - (void)confirmReset {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Reset all effects?"
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"重置所有音效？"
         message:@"Every effect goes off, and every value, curve and file choice back to its default. The Effects switch and your imported files stay."
         preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"Reset" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+    [alert addAction:[UIAlertAction actionWithTitle:@"重置" style:UIAlertActionStyleDestructive handler:^(__unused UIAlertAction *action) {
         SGDSPResetAll();
         [self readState];
         [UIView transitionWithView:self.tableView duration:0.25 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{

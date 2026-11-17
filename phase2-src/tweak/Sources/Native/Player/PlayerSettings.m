@@ -6,8 +6,8 @@
 
 NSArray<SGModSection *> *SGNativePlayerScreenSections(void) {
     return @[
-        SGSection(@"Player screen", @[
-            SGOptionRow(@"Artwork background", nil, SGKeyPlayerBackdrop),
+        SGSection(@"播放器页面", @[
+            SGOptionRow(@"封面背景", nil, SGKeyPlayerBackdrop),
             SGOptionRow(@"Glass header buttons", nil, SGKeyPlayer),
             SGKillRow(@"Disable Canvas", @"ios-feature-canvas.canvas_enabled"),
             SGFlagRow(@"Sheet style player", @"ios-feature-nowplaying.sheet_style_npv"),
@@ -15,8 +15,8 @@ NSArray<SGModSection *> *SGNativePlayerScreenSections(void) {
             SGFlagRow(@"New progress slider", @"ios-feature-encoreexperiments.new_npv_slider_enabled"),
             SGFlagRow(@"Expand the sticky header on tap", @"ios-feature-nowplaying.expand_sticky_header_on_tap"),
         ]),
-        SGSection(@"Hide cards below the player", @[
-            SGHideRow(@"Lyrics", nil, SGHideLyricsCard),
+        SGSection(@"隐藏播放器下方卡片", @[
+            SGHideRow(@"歌词", nil, SGHideLyricsCard),
             SGHideRow(@"About the artist", nil, SGHideAboutArtist),
             SGHideRow(@"Related videos", nil, SGHideRelatedVideos),
             SGHideRow(@"SongDNA", nil, SGHideSongDNA),
@@ -26,12 +26,12 @@ NSArray<SGModSection *> *SGNativePlayerScreenSections(void) {
             SGHideRow(@"Merch", nil, SGHideMerch),
             SGHideRow(@"Recommendations", nil, SGHideRecommendations),
         ]),
-        SGSection(@"Hide on the player", @[
+        SGSection(@"在播放器中隐藏", @[
             SGHideRow(@"Lyrics preview", nil, SGHideLyricsInline),
             SGHideRow(@"Shuffle", nil, SGHideShuffle),
             SGHideRow(@"Repeat", nil, SGHideRepeat),
             SGHideRow(@"Add to playlist", nil, SGHideAddTo),
-            SGHideRow(@"Queue", nil, SGHideQueue),
+            SGHideRow(@"播放队列", nil, SGHideQueue),
             SGHideRow(@"Share", nil, SGHideShare),
             SGHideRow(@"Connect to a device", nil, SGHideConnect),
         ]),
@@ -43,13 +43,13 @@ SGModRow *SGGlassLyricsRow(void) {
 }
 
 UIViewController *SGQueueSettingsPage(void) {
-    return [[SGModPage alloc] initWithTitle:@"Queue & devices" intro:SGRestartNote sections:@[
-        SGSection(@"Bottom sheets", @[
+    return [[SGModPage alloc] initWithTitle:@"播放队列与设备" intro:SGRestartNote sections:@[
+        SGSection(@"底部弹出面板", @[
             SGFlagRow(@"Queue as a bottom sheet", @"ios-feature-nowplaying.bottom_sheet_queue_enabled"),
             SGFlagRow(@"Connect as a bottom sheet", @"ios-feature-nowplaying-elements.enable_connect_bottom_sheet"),
             SGFlagRow(@"Connect sheet from the video switcher", @"ios-playbackcontrol-audiovideoswitcher-impl.enable_connect_bottom_sheet"),
         ]),
-        SGSection(@"Queue", @[
+        SGSection(@"播放队列", @[
             SGFlagRow(@"Queue flip transition", @"ios-feature-nowplaying.queue_flip_transition_enabled"),
             SGFlagRow(@"Play next in the context menu", @"ios-feature-queue.is_play_next_context_menu_enabled"),
         ]),

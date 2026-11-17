@@ -4,13 +4,13 @@
 
 UIViewController *SGAlbumSettingsPage(void) {
     NSArray<SGModSection *> *sections = @[
-        SGSection(@"Header", @[
-            SGOptionRow(@"Artwork background", nil, SGKeyAlbumBackdrop),
+        SGSection(@"标题栏", @[
+            SGOptionRow(@"封面背景", nil, SGKeyAlbumBackdrop),
         ]),
-        SGSection(@"Hide in the header", @[
+        SGSection(@"在标题栏中隐藏", @[
             SGHideRow(@"Explore (video deck)", nil, SGHideAlbumExplore),
             SGHideRow(@"Add to library", nil, SGHideAlbumAddTo),
-            SGHideRow(@"Download", nil, SGHideAlbumDownload),
+            SGHideRow(@"下载", nil, SGHideAlbumDownload),
             SGHideRow(@"More options", nil, SGHideAlbumMore),
         ]),
         SGNotedSection(@"Hide on the page", @[
@@ -21,5 +21,5 @@ UIViewController *SGAlbumSettingsPage(void) {
             SGHideRow(@"You might also like", nil, SGHideAlbumYouMightLike),
         ], @"Works only with Spotify in English."),
     ];
-    return [[SGModPage alloc] initWithTitle:@"Album" intro:nil sections:sections footer:nil];
+    return [[SGModPage alloc] initWithTitle:@"专辑" intro:nil sections:sections footer:nil];
 }

@@ -13,33 +13,33 @@
 
 // The model's size as the footer and the prompts say it, to the nearest ten megabytes.
 static NSString *aboutSize(void) {
-    return [NSString stringWithFormat:@"about %lld MB", ((SGSingModelSize() >> 20) + 5) / 10 * 10];
+    return [NSString stringWithFormat:@"约 %lld MB", ((SGSingModelSize() >> 20) + 5) / 10 * 10];
 }
 
 static NSString *footer(void) {
-    return [NSString stringWithFormat:@"Sing turns the vocals of the song playing down to sing over, from the microphone in its lyrics. "
-            "It works on iOS 27 only. Its voice model, %@, is downloaded once and runs only on this iPhone. "
-            "The switch and the download apply straight away.", aboutSize()];
+    return [NSString stringWithFormat:@"Sing 会降低正在播放歌曲的人声，让你可通过歌词页面中的麦克风跟唱。"
+            "仅支持 iOS 27。人声模型（%@）只需下载一次，并且仅在此 iPhone 上运行。"
+            "开关和下载会立即生效。", aboutSize()];
 }
 
 static void tell(NSString *title, NSString *message) {
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"好" style:UIAlertActionStyleCancel handler:nil]];
     [SGTopController() presentViewController:alert animated:YES completion:nil];
 }
 
 static NSString *modelStatus(void) {
     int64_t received = SGSingModelReceived(), size = SGSingModelSize();
     switch (SGSingModelCurrentState()) {
-        case SGSingModelInstalled: return [@"Downloaded · " stringByAppendingString:SGSingModelBytesText(size)];
-        case SGSingModelChecking: return @"Checking…";
+        case SGSingModelInstalled: return [@"已下载 · " stringByAppendingString:SGSingModelBytesText(size)];
+        case SGSingModelChecking: return @"正在检查…";
         case SGSingModelDownloading:
-            return [NSString stringWithFormat:@"Downloading %lld %% · %lld of %@", received * 100 / size,
+            return [NSString stringWithFormat:@"正在下载 %lld%% · %lld/%@", received * 100 / size,
                     (received + (1ll << 19)) >> 20, SGSingModelBytesText(size)];
         case SGSingModelMissing:
-            if (SGSingModelFailure()) return @"Download failed";
-            if (received > 0) return [NSString stringWithFormat:@"Paused · %lld of %@", (received + (1ll << 19)) >> 20, SGSingModelBytesText(size)];
-            return @"Not downloaded";
+            if (SGSingModelFailure()) return @"下载失败";
+            if (received > 0) return [NSString stringWithFormat:@"已暂停 · %lld/%@", (received + (1ll << 19)) >> 20, SGSingModelBytesText(size)];
+            return @"未下载";
     }
     return nil;
 }
@@ -49,32 +49,32 @@ static void explainModel(void) {
     NSString *failure = SGSingModelFailure();
     switch (SGSingModelCurrentState()) {
         case SGSingModelInstalled:
-            tell(@"Voice model", [NSString stringWithFormat:@"It takes %@ on this iPhone. Remove it to free the space; Sing is unavailable without it.",
+            tell(@"人声模型", [NSString stringWithFormat:@"它在此 iPhone 上占用 %@。移除它可释放空间；没有该模型则无法使用 Sing。",
                                   SGSingModelBytesText(SGSingModelSize())]);
             break;
         case SGSingModelMissing:
-            tell(failure ? @"Download failed" : @"Voice model",
-                 failure ? [failure stringByAppendingString:@" Download goes on from where it stopped."]
-                         : [NSString stringWithFormat:@"Sing needs its voice model, %@, before its microphone shows in the lyrics.", aboutSize()]);
+            tell(failure ? @"下载失败" : @"人声模型",
+                 failure ? [failure stringByAppendingString:@" 下载会从中断位置继续。"]
+                         : [NSString stringWithFormat:@"Sing 需要先下载人声模型（%@），歌词中的麦克风才会显示。", aboutSize()]);
             break;
         default:
-            tell(@"Voice model", @"The download goes on while Spotify is in the background. Sing's microphone shows in the lyrics once it is in.");
+            tell(@"人声模型", @"即使 Spotify 在后台，下载仍会继续。下载完成后，歌词中会显示 Sing 的麦克风。");
     }
 }
 
 // Enough room first, then the network: nothing leaves on cellular without a yes.
 static void startDownload(void) {
     NSString *space = SGSingModelSpaceProblem();
-    if (space) { tell(@"Not enough space", space); return; }
+    if (space) { tell(@"储存空间不足", space); return; }
     SGSingModelCheckNetwork(^(SGSingModelNetwork network) {
         if (network == SGSingModelOffline) {
-            tell(@"No internet connection", @"Connect to Wi-Fi to download Sing's voice model.");
+            tell(@"没有互联网连接", @"请连接 Wi‑Fi 以下载 Sing 的人声模型。");
         } else if (network == SGSingModelMetered) {
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Download over cellular?"
-                message:[NSString stringWithFormat:@"This iPhone isn't on Wi-Fi, and Sing's voice model is %@.", aboutSize()]
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"要使用蜂窝网络下载吗？"
+                message:[NSString stringWithFormat:@"此 iPhone 未连接 Wi‑Fi，Sing 的人声模型大小为 %@。", aboutSize()]
                 preferredStyle:UIAlertControllerStyleAlert];
-            [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
-            [alert addAction:[UIAlertAction actionWithTitle:@"Download" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+            [alert addAction:[UIAlertAction actionWithTitle:@"下载" style:UIAlertActionStyleDefault handler:^(__unused UIAlertAction *action) {
                 SGSingModelDownload(YES);
             }]];
             [SGTopController() presentViewController:alert animated:YES completion:nil];
@@ -86,13 +86,13 @@ static void startDownload(void) {
 
 static void confirmRemove(void) {
     BOOL installed = SGSingModelCurrentState() == SGSingModelInstalled;
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Remove the voice model?"
-        message:installed ? [NSString stringWithFormat:@"Sing is unavailable until it is downloaded again (%@).", aboutSize()]
-                          : [NSString stringWithFormat:@"The %@ downloaded so far are deleted, and the next download starts over.",
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"移除人声模型？"
+        message:installed ? [NSString stringWithFormat:@"在重新下载前，Sing 将不可用（%@）。", aboutSize()]
+                          : [NSString stringWithFormat:@"目前已下载的 %@ 将被删除，下次下载会从头开始。",
                              SGSingModelBytesText(SGSingModelReceived())]
         preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
-    [alert addAction:[UIAlertAction actionWithTitle:@"Remove" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+    [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"移除" style:UIAlertActionStyleDestructive handler:^(__unused UIAlertAction *action) {
         SGSingModelRemove();
     }]];
     [SGTopController() presentViewController:alert animated:YES completion:nil];
@@ -100,42 +100,42 @@ static void confirmRemove(void) {
 
 // Below iOS 27 the switch is a row saying what is missing.
 static SGModRow *unavailableRow(void) {
-    return SGStatActionRow(@"Sing", nil, ^NSString *{ return @"Needs iOS 27"; }, ^{
-        tell(@"Sing", [NSString stringWithFormat:@"Sing separates a song's vocals on this iPhone with a voice model that needs iOS 27. "
+    return SGStatActionRow(@"Sing", nil, ^NSString *{ return @"需要 iOS 27"; }, ^{
+        tell(@"Sing", [NSString stringWithFormat:@"Sing 会通过人声模型在此 iPhone 上分离歌曲人声，该功能需要 iOS 27。 "
                        "This iPhone runs iOS %@.", UIDevice.currentDevice.systemVersion]);
     });
 }
 
 static SGModSection *karaokeSection(void) {
-    if (!SGSingSupported()) return SGNotedSection(@"Karaoke", @[unavailableRow()], footer());
-    SGModRow *sing = SGOptionRow(@"Sing", @"The microphone in the lyrics", SGRKeySing);
-    sing.changed = ^(BOOL on) { SGRSingApplySwitch(); };
+    if (!SGSingSupported()) return SGNotedSection(@"卡拉 OK", @[unavailableRow()], footer());
+    SGModRow *sing = SGOptionRow(@"Sing", @"歌词中的麦克风", SGRKeySing);
+    sing.changed = ^(__unused BOOL on) { SGRSingApplySwitch(); };
 
-    SGModRow *model = SGStatActionRow(@"Voice model", nil, ^NSString *{ return modelStatus(); }, ^{ explainModel(); });
+    SGModRow *model = SGStatActionRow(@"人声模型", nil, ^NSString *{ return modelStatus(); }, ^{ explainModel(); });
     model.progress = ^double {
         return SGSingModelCurrentState() == SGSingModelDownloading ? (double)SGSingModelReceived() / SGSingModelSize() : -1;
     };
     model.refreshOn = SGSingModelDidChangeNotification;
 
-    SGModRow *download = SGActionRow(@"Download voice model", nil, ^{ startDownload(); });
+    SGModRow *download = SGActionRow(@"下载人声模型", nil, ^{ startDownload(); });
     download.visible = ^BOOL { return SGSingModelCurrentState() == SGSingModelMissing; };
-    SGModRow *cancel = SGActionRow(@"Cancel download", nil, ^{ SGSingModelCancel(); });
+    SGModRow *cancel = SGActionRow(@"取消下载", nil, ^{ SGSingModelCancel(); });
     cancel.visible = ^BOOL {
         SGSingModelState state = SGSingModelCurrentState();
         return state == SGSingModelDownloading || state == SGSingModelChecking;
     };
     // Removing also takes what a stopped download kept, which can be most of the model.
-    SGModRow *remove = SGActionRow(@"Remove voice model", nil, ^{ confirmRemove(); });
+    SGModRow *remove = SGActionRow(@"移除人声模型", nil, ^{ confirmRemove(); });
     remove.color = SGRed();
     remove.visible = ^BOOL {
         SGSingModelState state = SGSingModelCurrentState();
         return state == SGSingModelInstalled || (state == SGSingModelMissing && SGSingModelReceived() > 0);
     };
-    return SGNotedSection(@"Karaoke", @[sing, model, download, cancel, remove], footer());
+    return SGNotedSection(@"卡拉 OK", @[sing, model, download, cancel, remove], footer());
 }
 
 UIViewController *SGRKaraokeSettingsPage(void) {
-    return [[SGModPage alloc] initWithTitle:@"Karaoke" intro:nil sections:@[karaokeSection()] footer:nil];
+    return [[SGModPage alloc] initWithTitle:@"卡拉 OK" intro:nil sections:@[karaokeSection()] footer:nil];
 }
 
 // Beside the main page's row: what Sing would do now, or how far its model has come.
@@ -143,7 +143,7 @@ NSString *SGRKaraokeSummary(void) {
     if (!SGSingSupported()) return @"Needs iOS 27";
     SGSingModelState state = SGSingModelCurrentState();
     if (state == SGSingModelDownloading) return [NSString stringWithFormat:@"%lld %%", SGSingModelReceived() * 100 / SGSingModelSize()];
-    if (state == SGSingModelChecking) return @"Checking…";
-    if (!SGFlag(SGRKeySing, NO)) return @"Off";
-    return state == SGSingModelInstalled ? @"On" : @"No model";
+    if (state == SGSingModelChecking) return @"正在检查…";
+    if (!SGFlag(SGRKeySing, NO)) return @"关闭";
+    return state == SGSingModelInstalled ? @"开启" : @"无模型";
 }

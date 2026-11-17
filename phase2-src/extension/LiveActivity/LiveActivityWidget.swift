@@ -180,11 +180,11 @@ private struct QueueView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 3) {
-            Text("Up next")
+            Text("下一首")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.white.opacity(0.45))
             if state.tracks.isEmpty {
-                Text("Nothing up next")
+                Text("暂无下一首")
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.6))
             }
@@ -215,14 +215,14 @@ private struct Summary: View {
             case .controls:
                 Text("\(state.title) · \(state.artist)")
             case .queue:
-                Text(state.tracks.first.map { "Next: \($0.title)" } ?? "Nothing up next")
+                Text(state.tracks.first.map { "下一首：\($0.title)" } ?? "暂无下一首")
             case .timer:
                 if let end = state.timerEnd, end > Date() {
-                    Text("Music stops in \(Text(timerInterval: Date()...end, countsDown: true))")
+                    Text("将在 \(Text(timerInterval: Date()...end, countsDown: true)) 后停止播放")
                 } else if state.timerEndOfTrack {
-                    Text("Music stops at the end of this track")
+                    Text("本曲播放结束后停止")
                 } else {
-                    Text("No sleep timer")
+                    Text("未设置睡眠定时")
                 }
             }
         }
@@ -361,7 +361,7 @@ private struct QueuePage: View {
     var body: some View {
         VStack(spacing: 4) {
             if state.tracks.isEmpty {
-                Text("Nothing up next")
+                Text("暂无下一首")
                     .font(.footnote)
                     .foregroundStyle(.white.opacity(0.55))
                     .frame(maxWidth: .infinity, minHeight: 60)
@@ -399,7 +399,7 @@ private struct TimerPage: View {
             if (state.timerEnd.map { $0 > Date() } ?? false) || state.timerEndOfTrack {
                 HStack(alignment: .center, spacing: 12) {
                     VStack(alignment: .leading, spacing: 0) {
-                        Text("Music stops")
+                        Text("停止播放")
                             .font(.caption)
                             .foregroundStyle(.white.opacity(0.55))
                         if let end = state.timerEnd {
@@ -407,7 +407,7 @@ private struct TimerPage: View {
                                 .font(.system(size: 34, weight: .bold).monospacedDigit())
                                 .foregroundStyle(green)
                         } else {
-                            Text("End of track")
+                            Text("本曲结束")
                                 .font(.title2.weight(.bold))
                                 .foregroundStyle(green)
                         }

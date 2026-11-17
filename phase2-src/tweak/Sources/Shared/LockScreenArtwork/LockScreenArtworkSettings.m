@@ -7,10 +7,10 @@
 #import "LockScreenArtwork.h"
 
 static void sayWhatIsMissing(void) {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Animated lock screen"
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"动态锁屏封面"
         message:[NSString stringWithFormat:@"Animated artwork is the lock screen's own, and iOS takes one only from 26 on. This phone runs iOS %@, where the cover stays still.", UIDevice.currentDevice.systemVersion]
         preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"好" style:UIAlertActionStyleCancel handler:nil]];
     [SGTopController() presentViewController:alert animated:YES completion:nil];
 }
 
@@ -22,7 +22,7 @@ static NSArray<SGOrderItem *> *sources(void) {
 }
 
 SGModRow *SGArtworkSourcesRow(NSString *key, NSString *note) {
-    SGModRow *row = SGPageRow(@"Sources", ^UIViewController *{
+    SGModRow *row = SGPageRow(@"来源", ^UIViewController *{
         return SGOrderPage(@"Artwork sources", sources(), ^NSArray<NSString *> *{ return SGArtworkOrderFor(key); },
                            ^(NSArray<NSString *> *keys) { SGArtworkSetOrderFor(key, keys); }, note);
     });
@@ -33,7 +33,7 @@ SGModRow *SGArtworkSourcesRow(NSString *key, NSString *note) {
                 if ([item.key isEqualToString:source]) [names addObject:item.name];
             }
         }
-        return names.count ? [names componentsJoinedByString:@", "] : @"None";
+        return names.count ? [names componentsJoinedByString:@"、"] : @"无";
     };
     return row;
 }

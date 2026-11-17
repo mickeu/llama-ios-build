@@ -76,7 +76,7 @@ static NSString *refusal(NSString *code) {
 }
 
 NSString *SGSpicyLyricsProblem(void) {
-    if (!storedKey()) return @"Needs a key";
+    if (!storedKey()) return @"需要密钥";
     NSString *code = [NSUserDefaults.standardUserDefaults stringForKey:kRefusedKey];
     return code ? refusal(code) : nil;
 }
@@ -304,7 +304,7 @@ SGLyricsResult *SGSpicyLyricsResultFrom(NSDictionary *body) {
         result.karaokeLines = SGKaraokeStaticLines(texts);
         // Static lines leave the breaks out, as the translations above do, so the two still pair up.
         if (result.karaokeLines.count == translations.count) {
-            [result.karaokeLines enumerateObjectsUsingBlock:^(SGKaraokeLine *line, NSUInteger i, BOOL *stop) {
+            [result.karaokeLines enumerateObjectsUsingBlock:^(SGKaraokeLine *line, NSUInteger i, __unused BOOL *stop) {
                 addTranslation(line, @[translations[i]]);
             }];
         }

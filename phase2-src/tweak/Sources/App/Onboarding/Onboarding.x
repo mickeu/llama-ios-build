@@ -19,7 +19,5 @@
 %end
 
 %ctor {
-    if (SGFlag(SGKeyOnboardingSeen, NO) && !SGDonateAfterTourPending()) return;
-    %init;
-    SGRequireClasses(@[@"_TtC19Home_FunkisPageImpl20FunkisViewController"]);
+    // 欢迎引导仅可由设置页手动打开，不在首次启动时主动弹出。
 }

@@ -106,9 +106,7 @@ void SGShowDonateSheet(void) {
 }
 
 SGModRow *SGDonateRow(void) {
-    SGModRow *row = SGWithSymbol(SGActionRow(@"Support spoti.pw", @"Buy the student behind it a coffee", ^{ SGShowDonateSheet(); }), @"cup.and.saucer.fill");
-    row.color = SGKofiColor();
-    return row;
+    return nil;
 }
 
 // Never over the tour or an alert. On schedule it also stays out of an update-notice run and asks once
@@ -139,22 +137,14 @@ void SGDonateHoldOff(void) {
     if (nextAsk() < now() + kEvery) askAgainIn(kEvery);
 }
 
-void SGDonateAfterTour(BOOL restarting) {
-    [NSUserDefaults.standardUserDefaults setBool:YES forKey:kAfterTourKey];
-    if (!restarting) SGOfferDonate();
+void SGDonateAfterTour(__unused BOOL restarting) {
+    // 不再在引导结束后显示捐赠提示。
 }
 
 void SGOfferDonate(void) {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{ offerWhenClear(kTries); });
+    // 不再主动显示捐赠提示。
 }
 
 void SGWatchForDonate(void) {
-    nextAsk();
-    __block id observer = [NSNotificationCenter.defaultCenter addObserverForName:UIApplicationDidBecomeActiveNotification
-                                                                          object:nil
-                                                                           queue:NSOperationQueue.mainQueue
-                                                                      usingBlock:^(NSNotification *note) {
-        [NSNotificationCenter.defaultCenter removeObserver:observer];
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kSettle * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{ offerWhenClear(kTries); });
-    }];
+    // 不再注册捐赠自动提示。
 }

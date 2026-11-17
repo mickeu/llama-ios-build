@@ -4,20 +4,20 @@
 #import "LiveActivity.h"
 
 static NSArray<NSString *> *viewNames(void) {
-    return @[@"Lyrics", @"Queue", @"Control menu"];
+    return @[@"歌词", @"播放队列", @"控制菜单"];
 }
 
 UIViewController *SGLiveActivitySettingsPage(void) {
-    SGModRow *on = SGOptionRow(@"Live Activity", nil, SGKeyLiveActivity);
+    SGModRow *on = SGOptionRow(@"实时活动", nil, SGKeyLiveActivity);
     on.changed = ^(BOOL value) { SGSetLiveActivityEnabled(value); };
-    SGModRow *view = SGChoiceRow(@"Shows", nil, SGKeyLiveActivityView, viewNames(), SGLiveActivityLyrics);
-    return [[SGModPage alloc] initWithTitle:@"Live Activity" intro:nil sections:@[
+    SGModRow *view = SGChoiceRow(@"显示内容", nil, SGKeyLiveActivityView, viewNames(), SGLiveActivityLyrics);
+    return [[SGModPage alloc] initWithTitle:@"实时活动" intro:nil sections:@[
         SGSection(nil, @[on, view]),
     ] footer:nil];
 }
 
 NSString *SGLiveActivitySummary(void) {
-    if (!SGFlag(SGKeyLiveActivity, NO)) return @"Off";
+    if (!SGFlag(SGKeyLiveActivity, NO)) return @"关闭";
     NSInteger index = SGInt(SGKeyLiveActivityView, SGLiveActivityLyrics);
     NSArray<NSString *> *names = viewNames();
     return index >= 0 && index < (NSInteger)names.count ? names[index] : names.firstObject;

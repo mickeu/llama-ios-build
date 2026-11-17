@@ -473,7 +473,7 @@ static void finishDonor(id delegate, NSURLSession *session, NSURLSessionDataTask
     NSData *page = decide(state.track, chain, nil, YES, state.artwork ? coloursIn(body) : nil);
     if (!page) {
         SGLog(@"lyrics: no source has lyrics for %@ any more, its request fails", state.track);
-        NSString *reason = [NSString stringWithFormat:@"No lyrics source has lyrics for %@", state.track];
+        NSString *reason = [NSString stringWithFormat:@"没有歌词来源提供 %@ 的歌词", state.track];
         forward([NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorResourceUnavailable userInfo:@{NSLocalizedDescriptionKey: reason}]);
         return;
     }

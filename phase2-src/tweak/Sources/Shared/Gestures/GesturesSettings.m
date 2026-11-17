@@ -107,7 +107,7 @@ static NSString *cellLabel(SGGestureAction action) {
 
 - (instancetype)init {
     if (!(self = [super initWithStyle:UITableViewStyleInsetGrouped])) return nil;
-    self.title = @"Gestures";
+    self.title = @"手势";
     return self;
 }
 
@@ -144,7 +144,7 @@ static NSString *cellLabel(SGGestureAction action) {
 
 - (void)pickActionFor:(NSInteger)cell {
     NSArray<NSString *> *names = SGGestureActionNames();
-    UIAlertController *sheet = [UIAlertController alertControllerWithTitle:@"Double tap here"
+    UIAlertController *sheet = [UIAlertController alertControllerWithTitle:@"在此处双击"
                                                                   message:nil
                                                            preferredStyle:UIAlertControllerStyleActionSheet];
     [names enumerateObjectsUsingBlock:^(NSString *name, NSUInteger index, BOOL *stop) {
@@ -153,7 +153,7 @@ static NSString *cellLabel(SGGestureAction action) {
             [self refresh];
         }]];
     }];
-    [sheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+    [sheet addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
     sheet.popoverPresentationController.sourceView = _grid;
     sheet.popoverPresentationController.sourceRect = _grid.bounds;
     [self presentViewController:sheet animated:YES completion:nil];
@@ -172,8 +172,8 @@ static NSString *cellLabel(SGGestureAction action) {
 }
 
 - (UIView *)tableView:(UITableView *)table viewForHeaderInSection:(NSInteger)section {
-    if (section == 1) return SGSectionHeader(table, @"Split");
-    if (section == 2) return SGSectionHeader(table, @"Seek step");
+    if (section == 1) return SGSectionHeader(table, @"分区");
+    if (section == 2) return SGSectionHeader(table, @"快进／快退步长");
     return nil;
 }
 

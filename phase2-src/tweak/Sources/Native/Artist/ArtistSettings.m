@@ -4,10 +4,10 @@
 
 UIViewController *SGArtistSettingsPage(void) {
     NSArray<SGModSection *> *sections = @[
-        SGSection(@"Photo", @[
+        SGSection(@"照片", @[
             SGOptionRow(@"Fade into a blur", nil, SGKeyArtistPhotoFade),
         ]),
-        SGSection(@"Hide in the header", @[
+        SGSection(@"在标题栏中隐藏", @[
             SGHideRow(@"Explore (video deck)", nil, SGHideArtistExplore),
             SGHideRow(@"Follow", nil, SGHideArtistFollow),
             SGHideRow(@"More options", nil, SGHideArtistMore),
@@ -15,10 +15,10 @@ UIViewController *SGArtistSettingsPage(void) {
             SGHideRow(@"Verified badge", nil, SGHideArtistVerified),
             SGHideRow(@"Monthly listeners", nil, SGHideArtistListeners),
         ]),
-        SGSection(@"Tabs", @[
-            SGHideRow(@"Hide the tab bar", nil, SGHideArtistTabBar),
+        SGSection(@"标签页", @[
+            SGHideRow(@"隐藏标签栏", nil, SGHideArtistTabBar),
         ]),
-        SGNotedSection(@"Hide on the page", @[
+        SGNotedSection(@"在页面中隐藏", @[
             SGHideRow(@"Songs you liked", nil, SGHideArtistLikedSongs),
             SGHideRow(@"Popular", nil, SGHideArtistPopular),
             SGHideRow(@"Artist pick", nil, SGHideArtistPick),
@@ -31,12 +31,12 @@ UIViewController *SGArtistSettingsPage(void) {
             SGHideRow(@"Appears on", nil, SGHideArtistAppearsOn),
             SGHideRow(@"Discovered on", nil, SGHideArtistDiscoveredOn),
         ], @"Works only with Spotify in English."),
-        SGSection(@"Spotify's own", @[
+        SGSection(@"Spotify 原生内容", @[
             SGFlagRow(@"Share button in the header", @"ios-creator-impl.share_in_action_row_enabled_artist"),
             SGFlagRow(@"More options in the navigation bar", @"ios-creator-impl.context_menu_in_navigation_bar_enabled_artist"),
             SGFlagRow(@"Top collaborators", @"ios-creator-impl.is_top_collaborators_enabled"),
             SGFlagRow(@"Artist facts", @"ios-creator-impl.is_artist_facts_enabled"),
         ]),
     ];
-    return [[SGModPage alloc] initWithTitle:@"Artist" intro:nil sections:sections footer:nil];
+    return [[SGModPage alloc] initWithTitle:@"艺人" intro:nil sections:sections footer:nil];
 }

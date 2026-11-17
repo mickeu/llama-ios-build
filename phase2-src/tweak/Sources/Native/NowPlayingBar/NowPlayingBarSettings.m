@@ -3,11 +3,11 @@
 #import "NowPlayingBar.h"
 
 UIViewController *SGNowPlayingBarSettingsPage(void) {
-    return [[SGModPage alloc] initWithTitle:@"Now playing bar" intro:SGRestartNote sections:@[
+    return [[SGModPage alloc] initWithTitle:@"正在播放栏" intro:SGRestartNote sections:@[
         SGSection(nil, @[
             SGHideRow(@"Hide the device button", nil, SGHideBarConnect),
         ]),
-        SGSection(@"Spotify's flags", @[
+        SGSection(@"Spotify 旗标", @[
             SGFlagRow(@"Two lines of track info", @"ios-feature-nowplayingbar.two_lines_information_unit"),
             SGFlagRow(@"Save button", @"ios-feature-nowplayingbar.add_button"),
             SGFlagRow(@"Queue badge", @"ios-feature-nowplayingbar.queue_badge"),

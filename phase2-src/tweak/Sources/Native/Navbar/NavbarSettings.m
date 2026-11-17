@@ -12,11 +12,11 @@
 // name of the SPTEncoreIcon class method that draws its glyph.
 static NSArray<NSDictionary *> *tabPresets(void) {
     return @[
-        @{SGNavbarTitle: @"Home", SGNavbarURI: @"spotify:home", SGNavbarIcon: @"home"},
+        @{SGNavbarTitle: @"主页", SGNavbarURI: @"spotify:home", SGNavbarIcon: @"home"},
         @{SGNavbarTitle: @"Search", SGNavbarURI: @"spotify:search", SGNavbarIcon: @"search"},
         @{SGNavbarTitle: @"Your Library", SGNavbarURI: @"spotify:collection", SGNavbarIcon: @"collection"},
         @{SGNavbarTitle: @"Liked Songs", SGNavbarURI: @"spotify:collection:tracks", SGNavbarIcon: @"heart"},
-        @{SGNavbarTitle: @"Playlists", SGNavbarURI: @"spotify:playlists", SGNavbarIcon: @"playlist"},
+        @{SGNavbarTitle: @"播放列表", SGNavbarURI: @"spotify:playlists", SGNavbarIcon: @"playlist"},
         @{SGNavbarTitle: @"Albums", SGNavbarURI: @"spotify:collection:albums", SGNavbarIcon: @"album"},
         @{SGNavbarTitle: @"Artists", SGNavbarURI: @"spotify:collection:artists", SGNavbarIcon: @"artist"},
         @{SGNavbarTitle: @"Podcasts", SGNavbarURI: @"spotify:collection:podcasts", SGNavbarIcon: @"podcasts"},
@@ -27,7 +27,7 @@ static NSArray<NSDictionary *> *tabPresets(void) {
         @{SGNavbarTitle: @"New Releases", SGNavbarURI: @"spotify:new-releases", SGNavbarIcon: @"star"},
         @{SGNavbarTitle: @"Made For You", SGNavbarURI: @"spotify:made-for-you", SGNavbarIcon: @"user"},
         @{SGNavbarTitle: @"Concerts", SGNavbarURI: @"spotify:concerts", SGNavbarIcon: @"events"},
-        @{SGNavbarTitle: @"Queue", SGNavbarURI: @"spotify:now-playing:queue", SGNavbarIcon: @"queue"},
+        @{SGNavbarTitle: @"播放队列", SGNavbarURI: @"spotify:now-playing:queue", SGNavbarIcon: @"queue"},
         @{SGNavbarTitle: @"Create", SGNavbarURI: @"spotify:create-menu", SGNavbarIcon: @"plus"},
     ];
 }
@@ -145,14 +145,14 @@ static UIView *iconAccessory(NSString *name) {
 - (instancetype)initWithDraft:(NSMutableDictionary *)draft {
     if (!(self = [super initWithStyle:UITableViewStyleInsetGrouped])) return nil;
     _draft = draft;
-    self.title = @"Add a Tab";
+    self.title = @"添加标签页";
     return self;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel)];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Add" style:UIBarButtonItemStyleDone target:self action:@selector(add)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"添加" style:UIBarButtonItemStyleDone target:self action:@selector(add)];
 }
 
 // The link and icon pages write into the draft, so it is read again on the way back.
@@ -166,7 +166,7 @@ static UIView *iconAccessory(NSString *name) {
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)table { return 2; }
 - (NSInteger)tableView:(UITableView *)table numberOfRowsInSection:(NSInteger)section { return section == 0 ? 1 : 2; }
 - (UIView *)tableView:(UITableView *)table viewForHeaderInSection:(NSInteger)section {
-    return SGSectionHeader(table, section == 0 ? @"Name" : @"Customize");
+    return SGSectionHeader(table, section == 0 ? @"名称" : @"自定义");
 }
 - (CGFloat)tableView:(UITableView *)table heightForHeaderInSection:(NSInteger)section { return SGSectionHeaderHeight; }
 - (CGFloat)tableView:(UITableView *)table heightForFooterInSection:(NSInteger)section { return CGFLOAT_MIN; }
@@ -180,7 +180,7 @@ static UIView *iconAccessory(NSString *name) {
         field.translatesAutoresizingMaskIntoConstraints = NO;
         field.textColor = UIColor.whiteColor;
         field.tintColor = SGGreen();
-        field.placeholder = @"Name";
+        field.placeholder = @"名称";
         field.clearButtonMode = UITextFieldViewModeWhileEditing;
         field.autocorrectionType = UITextAutocorrectionTypeNo;
         field.returnKeyType = UIReturnKeyDone;
@@ -254,14 +254,14 @@ static UIView *iconAccessory(NSString *name) {
     if (!(self = [super initWithStyle:UITableViewStyleInsetGrouped])) return nil;
     _draft = draft;
     _presets = openablePresets();
-    self.title = @"Choose a Link";
+    self.title = @"选择链接";
     return self;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)table { return 2; }
 - (NSInteger)tableView:(UITableView *)table numberOfRowsInSection:(NSInteger)section { return section == 0 ? (NSInteger)_presets.count : 1; }
 - (UIView *)tableView:(UITableView *)table viewForHeaderInSection:(NSInteger)section {
-    return SGSectionHeader(table, section == 0 ? @"Spotify's pages" : @"Custom link");
+    return SGSectionHeader(table, section == 0 ? @"Spotify 页面" : @"自定义链接");
 }
 - (CGFloat)tableView:(UITableView *)table heightForHeaderInSection:(NSInteger)section { return SGSectionHeaderHeight; }
 - (CGFloat)tableView:(UITableView *)table heightForFooterInSection:(NSInteger)section { return CGFLOAT_MIN; }
@@ -289,7 +289,7 @@ static UIView *iconAccessory(NSString *name) {
         [self.navigationController popViewControllerAnimated:YES];
         return;
     }
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Custom link" message:@"Paste a Spotify share link or enter a spotify: URI." preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"自定义链接" message:@"Paste a Spotify share link or enter a spotify: URI." preferredStyle:UIAlertControllerStyleAlert];
     [alert addTextFieldWithConfigurationHandler:^(UITextField *field) {
         field.placeholder = @"spotify:playlist:… or open.spotify.com/…";
         field.text = self->_draft[SGNavbarURI];
@@ -297,8 +297,8 @@ static UIView *iconAccessory(NSString *name) {
         field.autocorrectionType = UITextAutocorrectionTypeNo;
         field.keyboardType = UIKeyboardTypeURL;
     }];
-    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
-    [alert addAction:[UIAlertAction actionWithTitle:@"Use Link" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"使用链接" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         NSURL *url = SGSpotifyURIFromText(alert.textFields.firstObject.text);
         if (!url) {
             [self showLinkError:@"Enter a Spotify share link or spotify: URI."];
@@ -321,8 +321,8 @@ static UIView *iconAccessory(NSString *name) {
 }
 
 - (void)showLinkError:(NSString *)message {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Can't use that link" message:message preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"无法使用该链接" message:message preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"好" style:UIAlertActionStyleDefault handler:nil]];
     [self presentViewController:alert animated:YES completion:nil];
 }
 
@@ -405,7 +405,7 @@ static NSArray<NSString *> *symbolNames(void) {
     _draft = draft;
     _encore = encoreIconNames();
     _symbols = symbolNames();
-    self.title = @"Choose an Icon";
+    self.title = @"选择图标";
     return self;
 }
 
@@ -435,7 +435,7 @@ static NSArray<NSString *> *symbolNames(void) {
     _searchController.searchResultsUpdater = self;
     _searchController.obscuresBackgroundDuringPresentation = NO;
     _searchController.hidesNavigationBarDuringPresentation = NO;
-    _searchController.searchBar.placeholder = @"Search all icons";
+    _searchController.searchBar.placeholder = @"搜索所有图标";
     _searchController.searchBar.tintColor = UIColor.whiteColor;
     _searchController.searchBar.delegate = self;
     self.navigationItem.searchController = _searchController;
@@ -600,7 +600,7 @@ typedef NS_ENUM(NSInteger, SGNavbarSection) {
 
 - (instancetype)init {
     if (!(self = [super initWithStyle:UITableViewStyleInsetGrouped])) return nil;
-    self.title = @"Navbar";
+    self.title = @"导航栏";
     return self;
 }
 
@@ -642,7 +642,7 @@ typedef NS_ENUM(NSInteger, SGNavbarSection) {
 }
 
 - (NSString *)headerFor:(NSInteger)section {
-    return section == SGNavbarSectionTabs ? @"Tabs" : nil;
+    return section == SGNavbarSectionTabs ? @"标签页" : nil;
 }
 
 - (UIView *)tableView:(UITableView *)table viewForHeaderInSection:(NSInteger)section {
@@ -684,7 +684,7 @@ typedef NS_ENUM(NSInteger, SGNavbarSection) {
             cell.selectionStyle = UITableViewCellSelectionStyleDefault;
             break;
         default:
-            SGFillCell(cell, @"Use Spotify's order", nil, nil, @"arrow.uturn.backward");
+            SGFillCell(cell, @"使用 Spotify 的排序", nil, nil, @"arrow.uturn.backward");
             cell.selectionStyle = UITableViewCellSelectionStyleDefault;
             break;
     }
@@ -744,11 +744,11 @@ typedef NS_ENUM(NSInteger, SGNavbarSection) {
 }
 
 - (void)reset {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Use Spotify's order"
-                                                                  message:@"Every tab of Spotify's comes back where Spotify put it, and the tabs you added go."
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"使用 Spotify 的排序"
+                                                                  message:@"Spotify 原有标签页将恢复到默认位置，已添加的标签页会被移除。"
                                                            preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
-    [alert addAction:[UIAlertAction actionWithTitle:@"Reset" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+    [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"重置" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
         SGSetNavbarLayout(@[]);
         SGRefreshTabBar();
         [self reload];

@@ -83,34 +83,5 @@ static void offerWhenClear(NSInteger tries) {
 }
 
 void SGWatchForUpdates(void) {
-    // Every time Spotify comes to the front, not only the first: it lives for days behind other apps,
-    // and the day's usage count has to go out on a day it was merely brought back. The sheet is still
-    // once per launch.
-    static BOOL launched;
-    [NSNotificationCenter.defaultCenter addObserverForName:UIApplicationDidBecomeActiveNotification
-                                                    object:nil
-                                                     queue:NSOperationQueue.mainQueue
-                                                usingBlock:^(NSNotification *note) {
-        BOOL first = !launched;
-        launched = YES;
-        if (!first && !SGUsageOwed()) return;
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kSettle * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            BOOL tell = first && SGEnabled(SGKeyUpdateNotice);
-            if (tell && SGUpdateVersion()) {   // the last check knows one already
-                offerWhenClear(kTries);
-            } else if (tell) {
-                __block id landed = [NSNotificationCenter.defaultCenter addObserverForName:SGUpdateCheckedNotification
-                                                                                    object:nil
-                                                                                     queue:NSOperationQueue.mainQueue
-                                                                                usingBlock:^(NSNotification *n) {
-                    [NSNotificationCenter.defaultCenter removeObserver:landed];
-                    offerWhenClear(kTries);
-                }];
-            }
-            // Inside the six hours this does nothing and no check lands, which is the point: the
-            // sheet is for a release that turned up, not for every launch. The day's usage count is
-            // the exception, and it goes out whether or not the sheet is wanted.
-            if (tell || SGUsageOwed()) SGCheckForUpdate(NO);
-        });
-    }];
+    // 更新仅在“更新”页面手动查看；不再主动弹窗或后台请求。
 }

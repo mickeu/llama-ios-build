@@ -85,7 +85,7 @@ static NSString *longDate(NSString *published) {    // 18 September 2026
 
 - (instancetype)init {
     if (!(self = [super initWithStyle:UITableViewStyleInsetGrouped])) return nil;
-    self.title = @"Updates";
+    self.title = @"更新";
     _groups = [self build];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(checkLanded)
                                                name:SGUpdateCheckedNotification object:nil];
@@ -126,21 +126,21 @@ static NSArray<SGUpdateRelease *> *releasesToShow(void) {
 - (NSArray<SGUpdateGroup *> *)build {
     NSMutableArray<SGUpdateGroup *> *groups = [NSMutableArray array];
     SGUpdateRow *check = [SGUpdateRow new];
-    check.title = @"Check now";
+    check.title = @"立即检查";
     check.symbol = @"arrow.clockwise";
     check.value = ^NSString *{ return SGUpdateStatus(); };
     check.action = ^{ SGCheckForUpdate(YES); };
     NSMutableArray<SGUpdateRow *> *top = [NSMutableArray arrayWithObject:check];
     SGUpdateRelease *newest = SGUpdateNewestRelease();
     if (SGUpdateVersion() && newest.url.length)
-        [top addObject:linkRow([@"Get " stringByAppendingString:newest.version],
+        [top addObject:linkRow([@"获取 " stringByAppendingString:newest.version],
                                @"The release on GitHub, where its .deb is", @"arrow.down.circle", newest.url)];
-    [top addObject:linkRow(@"All releases", @"Every version, this one and the ones before it",
+    [top addObject:linkRow(@"全部版本", @"查看当前及此前的所有版本",
                            @"clock.arrow.circlepath", [SGRepoURL stringByAppendingString:@"/releases"])];
     [groups addObject:group(nil, top)];
 
     SGUpdateRow *notice = [SGUpdateRow new];
-    notice.title = @"Auto check updates";
+    notice.title = @"自动检查更新";
     notice.symbol = @"bell";
     notice.key = SGKeyUpdateNotice;
     [groups addObject:group(nil, @[notice])];
@@ -163,8 +163,8 @@ static NSArray<SGUpdateRelease *> *releasesToShow(void) {
         NSString *date = shortDate(release.date);
         if (!kinds.count) {
             SGUpdateRow *empty = [SGUpdateRow new];
-            empty.title = @"Nothing written down";
-            empty.subtitle = release.url.length ? @"Tap to read the release on GitHub" : nil;
+            empty.title = @"暂无更新说明";
+            empty.subtitle = release.url.length ? @"轻点即可在 GitHub 查看此版本" : nil;
             if (release.url.length) empty.action = ^{ SGOpenURL(release.url); };
             [groups addObject:group([NSString stringWithFormat:@"%@%@", release.version,
                                      date.length ? [@" · " stringByAppendingString:date] : @""], @[empty])];

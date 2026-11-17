@@ -6,7 +6,7 @@ static NSString *const kSpicyDashboard = @"https://developers.spicylyrics.org/da
 
 static SGModSection *spicySection(void) {
     SGModRow *key = SGTextRow(@"Spicy Lyrics key",
-        @"Paste the publishable key (sl_pk_…) of your application on Spicy Lyrics' developer platform.", @"sl_pk_…",
+        @"粘贴你在 Spicy Lyrics 开发者平台创建的应用公开密钥（sl_pk_…）。", @"sl_pk_…",
         ^NSString *{
             NSString *shown = SGSpicyLyricsKeyShown();
             return !shown ? @"Not set" : SGSpicyLyricsProblem() ? @"Rejected" : shown;

@@ -6,17 +6,17 @@
 #import "Shared/LyricsSources/LyricsSources.h"
 
 SGModSection *SGLyricsSourcesSection(BOOL namingSource) {
-    SGModRow *sources = SGPageRow(@"Sources", ^UIViewController *{ return SGLyricsSourcesPage(); });
+    SGModRow *sources = SGPageRow(@"来源", ^UIViewController *{ return SGLyricsSourcesPage(); });
     sources.value = ^NSString *{
         NSMutableArray<NSString *> *names = [NSMutableArray array];
         for (NSString *key in SGLyricsOrder()) [names addObject:SGLyricsProviderFor(key).name];
-        return names.count ? [names componentsJoinedByString:@", "] : @"Off";
+        return names.count ? [names componentsJoinedByString:@", "] : @"关闭";
     };
     NSMutableArray<SGModRow *> *rows = [NSMutableArray arrayWithObjects:sources,
         SGOptionRow(@"Lyrics for every track", @"Even where Spotify has none", SGKeyLyricsAllTracks), nil];
     if (namingSource) [rows addObject:SGOptionRow(@"Show source", nil, SGKeyLyricsCredit)];
-    if (!SGLyricsEeveeReplaces()) return SGSection(@"Sources", rows);
-    return SGNotedSection(@"Sources", rows, @"EeveeSpotify is replacing lyrics, so these sources stay off. To use them, "
+    if (!SGLyricsEeveeReplaces()) return SGSection(@"来源", rows);
+    return SGNotedSection(@"来源", rows, @"EeveeSpotify is replacing lyrics, so these sources stay off. To use them, "
                           "turn on Do Not Replace Lyrics in EeveeSpotify's lyrics settings and restart Spotify.");
 }
 
@@ -25,7 +25,7 @@ SGModRow *SGLockScreenLyricsRow(void) {
 }
 
 SGModRow *SGLyricsTranslationLanguageRow(void) {
-    SGModRow *row = SGChoiceRow(@"Translation language", nil, SGKeyLyricsTranslationLanguage, SGLyricsTranslationLanguageNames(), 0);
+    SGModRow *row = SGChoiceRow(@"翻译语言", nil, SGKeyLyricsTranslationLanguage, SGLyricsTranslationLanguageNames(), 0);
     row.choiceFooter = @"Used when the lyrics come with translations. Any shows the first.";
     return row;
 }

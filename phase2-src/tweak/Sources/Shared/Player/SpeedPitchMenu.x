@@ -139,7 +139,7 @@ static UILabel *makeLabel(UIFont *font, UIColor *color) {
     [button setTitleColor:[primary() colorWithAlphaComponent:0.4] forState:UIControlStateHighlighted];
     [button setTitleColor:primary() forState:UIControlStateDisabled];
     button.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
-    button.accessibilityHint = @"Resets it";
+    button.accessibilityHint = @"恢复默认值";
     [button addTarget:self action:reset forControlEvents:UIControlEventTouchUpInside];
     return button;
 }
@@ -341,8 +341,8 @@ static NSString *summaryText(float speed, BOOL speedShown, float pitch, BOOL fol
 - (void)showValues {
     BOOL speedAllowed = SGPlayerSpeedAllowed(), pitchAvailable = SGPlayerPitchAvailable();
     [UIView performWithoutAnimation:^{
-        [_speedValue setTitle:speedAllowed ? speedText(_shownSpeed) : @"Unavailable here" forState:UIControlStateNormal];
-        [_pitchValue setTitle:pitchAvailable ? [pitchText(_shownPitch) stringByAppendingString:_shownPitch ? @" st" : @""] : @"Unavailable" forState:UIControlStateNormal];
+        [_speedValue setTitle:speedAllowed ? speedText(_shownSpeed) : @"此处不可用" forState:UIControlStateNormal];
+        [_pitchValue setTitle:pitchAvailable ? [pitchText(_shownPitch) stringByAppendingString:_shownPitch ? @" st" : @""] : @"不可用" forState:UIControlStateNormal];
         [_speedValue layoutIfNeeded];
         [_pitchValue layoutIfNeeded];
     }];
@@ -350,8 +350,8 @@ static NSString *summaryText(float speed, BOOL speedShown, float pitch, BOOL fol
     _pitchValue.enabled = pitchAvailable && _shownPitch != 0;
     BOOL follows = SGPlayerPitchFollowsSpeed();
     NSString *followed = follows ? followedPitchText(_shownSpeed) : nil;
-    _speed.accessibilityValue = !speedAllowed ? @"Unavailable" : followed ? [NSString stringWithFormat:@"%@, pitch %@", speedText(_shownSpeed), followed] : speedText(_shownSpeed);
-    _pitch.accessibilityValue = _shownPitch == 0 ? @"Original pitch" : [NSString stringWithFormat:@"%.0f semitones %@", fabsf(_shownPitch), _shownPitch > 0 ? @"up" : @"down"];
+    _speed.accessibilityValue = !speedAllowed ? @"不可用" : followed ? [NSString stringWithFormat:@"%@, pitch %@", speedText(_shownSpeed), followed] : speedText(_shownSpeed);
+    _pitch.accessibilityValue = _shownPitch == 0 ? @"原始音调" : [NSString stringWithFormat:@"%.0f 个半音%@", fabsf(_shownPitch), _shownPitch > 0 ? @"升" : @"降"];
 
     NSString *summary = summaryText(_shownSpeed, YES, _shownPitch, follows);
     _summary.text = sg_open ? nil : summary;

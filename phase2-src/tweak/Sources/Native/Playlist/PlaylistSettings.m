@@ -2,24 +2,24 @@
 #import "Playlist.h"
 
 UIViewController *SGPlaylistSettingsPage(void) {
-    return [[SGModPage alloc] initWithTitle:@"Playlists" intro:nil sections:@[
-        SGSection(@"Header", @[
-            SGOptionRow(@"Artwork background", nil, SGKeyPlaylistBackdrop),
+    return [[SGModPage alloc] initWithTitle:@"播放列表" intro:nil sections:@[
+        SGSection(@"标题栏", @[
+            SGOptionRow(@"封面背景", nil, SGKeyPlaylistBackdrop),
         ]),
-        SGSection(@"Hide in the playlist header", @[
+        SGSection(@"在播放列表标题中隐藏", @[
             SGHideRow(@"Cover artwork", nil, SGHidePlaylistArtwork),
             SGHideRow(@"Description", nil, SGHidePlaylistDescription),
             SGHideRow(@"Creator and collaborators", nil, SGHidePlaylistCreator),
             SGHideRow(@"Length and saves", nil, SGHidePlaylistLength),
         ]),
-        SGSection(@"Hide playlist buttons", @[
+        SGSection(@"隐藏播放列表按钮", @[
             SGHideRow(@"Video", nil, SGHidePlaylistVideo),
             SGHideRow(@"Add to library", nil, SGHidePlaylistAddTo),
-            SGHideRow(@"Download", nil, SGHidePlaylistDownload),
+            SGHideRow(@"下载", nil, SGHidePlaylistDownload),
             SGHideRow(@"Share", nil, SGHidePlaylistShare),
             SGHideRow(@"More", nil, SGHidePlaylistMore),
         ]),
-        SGSection(@"Hide above the tracks", @[
+        SGSection(@"在曲目上方隐藏", @[
             SGHideRow(@"Curation pills", nil, SGHidePlaylistPills),
             SGHideRow(@"Find and sort bar", nil, SGHidePlaylistFind),
         ]),

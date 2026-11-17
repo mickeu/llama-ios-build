@@ -109,7 +109,7 @@ static __weak UIView *sg_titleElement;      // the arranged element view holding
     _face.userInteractionEnabled = NO;
     [self addSubview:_face];
     self.isAccessibilityElement = YES;
-    self.accessibilityLabel = @"Hide lyrics";
+    self.accessibilityLabel = @"隐藏歌词";
     self.accessibilityTraits = UIAccessibilityTraitButton;
     [self addTarget:self action:@selector(tapped) forControlEvents:UIControlEventTouchUpInside];
     return self;

@@ -141,7 +141,7 @@ NSArray<SGModSection *> *SGRPlayerBackgroundSections(void) {
 
     SGModRow *preview = SGViewRow([SGRFluidPreview new], kPreviewHeight);
     NSArray<SGModRow *> *sliders = @[sliderRow(kSpeed), sliderRow(kWarp), sliderRow(kBlur), sliderRow(kSaturation), sliderRow(kBrightness)];
-    SGModRow *reset = SGActionRow(@"Reset", nil, ^{
+    SGModRow *reset = SGActionRow(@"重置", nil, ^{
         for (NSString *key in @[SGRKeyFluidSpeed, SGRKeyFluidWarp, SGRKeyFluidBlur, SGRKeyFluidSaturation, SGRKeyFluidBrightness]) {
             [NSUserDefaults.standardUserDefaults removeObjectForKey:key];
         }

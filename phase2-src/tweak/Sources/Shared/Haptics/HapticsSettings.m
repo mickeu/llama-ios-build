@@ -10,7 +10,7 @@
 static NSString *const kMusicHapticsInfo = @"The iPhone taps along with the drums and rumbles under the bass of whatever Spotify is playing, worked out from the sound as it plays, much like Music Haptics in Apple Music.\n\nIt follows the sound this iPhone plays, through its speaker or headphones, while Spotify is open: iOS plays no haptics for an app in the background, and a song playing on another device through Connect has no sound here to follow.";
 
 static NSArray<NSString *> *followsNames(void) {
-    return @[@"Everything", @"Beat", @"Bass"];
+    return @[@"全部", @"节拍", @"低音"];
 }
 
 static NSArray<NSString *> *followsNotes(void) {
@@ -40,7 +40,7 @@ SGMusicFollows SGMusicHapticsFollows(void) {
 static SGModRow *strengthRow(NSString *key, void (^changed)(void)) {
     NSInteger minimum, maximum;
     strengthRange(key, &minimum, &maximum);
-    return SGSliderRow(@"Strength", nil, minimum, maximum, SGStrengthStep,
+    return SGSliderRow(@"强度", nil, minimum, maximum, SGStrengthStep,
         ^double { return SGHapticsStrength(key) * 100; },
         ^(double value) {
             SGSetInt(key, lround(value));
@@ -50,7 +50,7 @@ static SGModRow *strengthRow(NSString *key, void (^changed)(void)) {
 }
 
 NSArray<SGModSection *> *SGVibrationsSections(void) {
-    SGModRow *controls = SGSwitchRow(@"Controls", nil, SGKeyControlHaptics);
+    SGModRow *controls = SGSwitchRow(@"控制项", nil, SGKeyControlHaptics);
     SGModRow *controlStrength = strengthRow(SGKeyControlStrength, ^{
         // Felt as it is set: a tap at the new strength with each step.
         SGPlayFeedback(SGFeedbackAdd);
@@ -69,7 +69,7 @@ NSArray<SGModSection *> *SGVibrationsSections(void) {
     follows.visible = musicOn;
 
     return @[
-        SGSection(@"Vibrations", @[SGWithSymbol(controls, @"hand.tap"), controlStrength]),
+        SGSection(@"振动", @[SGWithSymbol(controls, @"hand.tap"), controlStrength]),
         SGSection(nil, @[SGWithSymbol(music, @"waveform"), musicStrength, follows]),
     ];
 }

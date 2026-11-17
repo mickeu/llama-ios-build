@@ -283,7 +283,7 @@ static NSString *libraryFile(SGDSPFileKind kind, NSString *nameKey, NSString *ef
     NSString *name = SGDSPString(nameKey);
     if (!on) return nil;
     if (!name.length) {
-        setError(effect, @"No file is chosen");
+        setError(effect, @"未选择文件");
         return nil;
     }
     NSString *path = [SGDSPLibraryDirectory(kind) stringByAppendingPathComponent:name.lastPathComponent];
