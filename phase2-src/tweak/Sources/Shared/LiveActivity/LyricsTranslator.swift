@@ -31,10 +31,13 @@ public final class SGLyricsTranslator: NSObject {
                 return
             }
             let target = Locale.Language(identifier: languageCode)
-            let configuration = TranslationSession.Configuration(source: nil, target: target)
             Task {
                 do {
-                    let session = TranslationSession(configuration)
+                    // Most lyric sources sing in English; the session still auto-detects each line's
+                    // source language and downloads another model if it needs one.
+                    let session = TranslationSession(
+                        installedSource: Locale.Language(identifier: "en"),
+                        target: target)
                     let responses = try await session.translations(from: [
                         TranslationSession.Request(sourceText: trimmed)
                     ])
