@@ -20,7 +20,7 @@ public final class SGLyricsTranslator: NSObject {
             completion(nil)
             return
         }
-        guard #available(iOS 18.0, *) else {
+        guard #available(iOS 26.0, *) else {
             completion(nil)
             return
         }
