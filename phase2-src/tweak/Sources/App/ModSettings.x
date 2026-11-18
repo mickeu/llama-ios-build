@@ -34,6 +34,14 @@
 static const CGFloat kRowHeight = 56;
 static char kRowKey, kInsetKey;
 
+static void collectLabels(UIView *view, NSMutableArray<NSString *> *texts) {
+    if ([view isKindOfClass:UILabel.class]) {
+        NSString *text = ((UILabel *)view).text;
+        if (text.length) [texts addObject:text];
+    }
+    for (UIView *inner in view.subviews) collectLabels(inner, texts);
+}
+
 static SGModRow *pageRow(NSString *title, NSString *symbol, UIViewController *(^page)(void)) {
     return SGWithSymbol(SGPageRow(title, page), symbol);
 }
@@ -222,13 +230,25 @@ static BOOL isSettingsRoot(UIViewController *list) {
                 NSString *path = [dir stringByAppendingPathComponent:@"settings-dump.txt"];
                 int fd = open(path.UTF8String, O_WRONLY | O_CREAT | O_TRUNC, 0644);
                 if (fd >= 0) {
-                    char buf[256];
+                    char buf[512];
                     int n = snprintf(buf, sizeof buf, "settings: %ld sections, cv=%s\n", (long)sections, NSStringFromClass(cv.class).UTF8String);
                     write(fd, buf, n);
                     for (NSInteger s = 0; s < sections; s++) {
                         NSInteger items = [ds collectionView:cv numberOfItemsInSection:s];
                         n = snprintf(buf, sizeof buf, "  sec %ld: %ld items\n", (long)s, (long)items);
                         write(fd, buf, n);
+                        for (NSInteger i = 0; i < MIN(items, 16); i++) {
+                            NSIndexPath *ip = [NSIndexPath indexPathForItem:i inSection:s];
+                            UICollectionViewCell *cell = [ds collectionView:cv cellForItemAtIndexPath:ip];
+                            NSString *joined = @"";
+                            if (cell) {
+                                NSMutableArray<NSString *> *texts = [NSMutableArray array];
+                                collectLabels(cell.contentView, texts);
+                                joined = [texts componentsJoinedByString:@"|"];
+                            }
+                            n = snprintf(buf, sizeof buf, "    [%ld,%ld] %s: %s\n", (long)s, (long)i, cell ? NSStringFromClass(cell.class).UTF8String : "nil", joined.UTF8String ?: "");
+                            write(fd, buf, n);
+                        }
                     }
                     close(fd);
                 }
