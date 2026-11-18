@@ -252,7 +252,7 @@ static SGModSettingsRow *ensureDrawerRow(UICollectionView *list) {
 %end
 
 // 设置页顶部「节省流量模式 / 私人听歌房」卡片组的隐藏：item 1 是这两个卡片合并的 cell。
-// 通过布局属性把该 cell 的尺寸压成 0，不改 dataSource，避免破坏 diffable data source 状态。
+// 只做视图层 hidden/alpha，不碰 dataSource、不碰 layout attribute。
 static BOOL isSettingsList(UICollectionView *list) {
     return [NSStringFromClass(list.class) containsString:@"SettingsListCollectionView"];
 }
@@ -262,26 +262,20 @@ static BOOL isSettingsCard(NSIndexPath *indexPath) {
 }
 
 // The lists lay out after their controllers and again whenever their content changes.
-// 布局层隐藏：把「节省流量/私人听歌房」卡片组的布局属性压成 0 尺寸，其他项自然上移。
-// 只改 layoutAttributesForElementsInRect（渲染 cell 实际用的方法），不 copy、不设 hidden，
-// 避免破坏 collection view 的布局缓存一致性。
-%hook UICollectionViewLayout
-- (NSArray<UICollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(CGRect)rect {
-    NSArray<UICollectionViewLayoutAttributes *> *attrs = %orig;
-    if (!isSettingsList(self.collectionView)) return attrs;
-    for (UICollectionViewLayoutAttributes *attr in attrs) {
-        if (isSettingsCard(attr.indexPath)) {
-            attr.frame = CGRectZero;
-            attr.size = CGSizeZero;
-        }
-    }
-    return attrs;
-}
-%end
-
 %hook UICollectionView
 - (void)layoutSubviews {
     %orig;
+    // 隐藏设置页顶部「节省流量/私人听歌房」卡片组：只改视图层 hidden/alpha，
+    // 不碰 dataSource、不碰 layout attribute，避免破坏 diffable data source 与布局缓存。
+    if (isSettingsList(self)) {
+        for (UICollectionViewCell *cell in self.visibleCells) {
+            NSIndexPath *ip = [self indexPathForCell:cell];
+            if (ip && isSettingsCard(ip)) {
+                cell.hidden = YES;
+                cell.alpha = 0;
+            }
+        }
+    }
     SGModSettingsRow *row = objc_getAssociatedObject(self, &kRowKey);
     // The drawer sometimes populates its list after its controller's layout callback.
     if (!row && [NSStringFromClass(self.class) containsString:@"SideDrawerListCollectionView"])
