@@ -2,16 +2,16 @@
 // framework. The lyric sources bring their own line (and, rarely, a translation), so this runs only
 // when the Lyrics page asks for a specific language and a source has none — the line is translated
 // on the device, no key, no network beyond the language model download.
+//
+// Threading: the only shared state is `cache`, touched exclusively on `queue`. A session is created
+// per request and never shared, so there is no cross-thread access to TranslationSession.
 import Foundation
 import Translation
 
 @objc(SGLyricsTranslator)
 public final class SGLyricsTranslator: NSObject {
     private static let queue = DispatchQueue(label: "spotifyglass.translation", qos: .userInitiated)
-    // One prepared session per target language, kept so the downloaded model stays warm.
-    @available(iOS 18.0, *)
-    private static var sessions: [String: TranslationSession] = [:]
-    // A small cache so a line replayed after a seek is not translated again.
+    // A small cache so a line replayed after a seek is not translated again. Touched only on `queue`.
     private static var cache: [String: String] = [:]
     private static let cacheLimit = 512
 
@@ -35,7 +35,13 @@ public final class SGLyricsTranslator: NSObject {
             }
             Task {
                 do {
-                    let session = try await session(for: languageCode)
+                    // Most lyric sources sing in English; the engine still detects each line's real
+                    // source language. The model is downloaded on the first prepareTranslation call
+                    // and kept by the system afterwards.
+                    let session = TranslationSession(
+                        installedSource: Locale.Language(identifier: "en"),
+                        target: Locale.Language(identifier: languageCode))
+                    try await session.prepareTranslation()
                     let responses = try await session.translations(from: [
                         TranslationSession.Request(sourceText: trimmed)
                     ])
@@ -53,23 +59,5 @@ public final class SGLyricsTranslator: NSObject {
                 }
             }
         }
-    }
-
-    // The session for a target language, prepared (its model downloaded) on first use. Sessions are
-    // touched only on `queue`; the async work inside reads the captured session, never the dict.
-    @available(iOS 26.0, *)
-    private static func session(for languageCode: String) async throws -> TranslationSession {
-        if let existing = sessions[languageCode] {
-            return existing
-        }
-        // Most lyric sources sing in English; the engine still detects each line's real source.
-        let session = TranslationSession(
-            installedSource: Locale.Language(identifier: "en"),
-            target: Locale.Language(identifier: languageCode))
-        try await session.prepareTranslation()
-        queue.async {
-            sessions[languageCode] = session
-        }
-        return session
     }
 }
