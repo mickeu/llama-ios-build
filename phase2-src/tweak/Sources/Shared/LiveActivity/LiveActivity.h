@@ -24,6 +24,8 @@
 #define SGKeyLiveActivity @"spotifyglass.liveActivity"
 // Which view it shows, the index into the page's list.
 #define SGKeyLiveActivityView @"spotifyglass.liveActivity.view"
+// The Dynamic Island lyric's font size tag: 0 small (20pt), 1 standard (21pt), 2 big (22pt).
+#define SGKeyIslandLyricsFontSize @"spotifyglass.liveActivity.islandFontSize"
 // What the keys were called while this was the redesign's alone; LiveActivity.x's %ctor moves them over.
 #define SGKeyLiveActivityWas @"spotifyglass.redesign.liveActivity"
 #define SGKeyLiveActivityViewWas @"spotifyglass.redesign.liveActivity.view"
@@ -42,3 +44,5 @@ void SGSetLiveActivityEnabled(BOOL on);
 UIViewController *SGLiveActivitySettingsPage(void);
 // What the root's row reads out beside its chevron: the view shown, or Off.
 NSString *SGLiveActivitySummary(void);
+// The Dynamic Island lyric's font size tag: 0 small, 1 standard, 2 big.
+NSInteger SGIslandLyricsFontSize(void);

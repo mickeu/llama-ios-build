@@ -12,6 +12,15 @@ import WidgetKit
 private let green = Color(red: 0.12, green: 0.84, blue: 0.38)
 private let idle = Color.white.opacity(0.08)
 
+// The Dynamic Island lyric's point size: 0 small 20pt, 1 standard 21pt, 2 big 22pt.
+private func islandFontPointSize(_ tag: Int?) -> CGFloat {
+    switch min(max(tag ?? 1, 0), 2) {
+    case 0: return 20
+    case 2: return 22
+    default: return 21
+    }
+}
+
 private typealias State = SGLyricsAttributes.ContentState
 private typealias Tab = SGLyricsAttributes.Tab
 
@@ -76,7 +85,7 @@ struct SGLyricsLiveActivity: Widget {
                 } else if context.state.view == .lyrics, !context.state.line.isEmpty {
                     ScrollingLyrics(line: context.state.line, lineStart: context.state.lineStart,
                                     lineDuration: context.state.lineDuration, refreshTime: context.state.refreshTime,
-                                    size: 21, color: green)
+                                    size: islandFontPointSize(context.state.islandFontSize), color: green)
                         .direction(of: context.state.line)
                 } else {
                     Image(systemName: context.state.paused ? "pause.fill" : "waveform")
@@ -90,7 +99,7 @@ struct SGLyricsLiveActivity: Widget {
                 } else if context.state.view == .lyrics, !context.state.line.isEmpty {
                     ScrollingLyrics(line: context.state.line, lineStart: context.state.lineStart,
                                     lineDuration: context.state.lineDuration, refreshTime: context.state.refreshTime,
-                                    size: 20, color: green)
+                                    size: islandFontPointSize(context.state.islandFontSize), color: green)
                 } else {
                     Image(systemName: "music.note")
                         .foregroundStyle(green)

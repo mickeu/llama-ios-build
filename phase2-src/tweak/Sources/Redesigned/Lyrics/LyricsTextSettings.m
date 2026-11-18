@@ -2,6 +2,7 @@
 #import "Core/SGCore.h"
 #import "Settings/SGModPage.h"
 #import "Settings/SGPageStyle.h"
+#import "Shared/LiveActivity/LiveActivity.h"
 #import "LyricsText.h"
 
 @interface SGRLyricsTextPage : SGPage
@@ -36,12 +37,17 @@
     SGInsetForBars(self.tableView);
 }
 
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)table {
+    return 2;   // 灵动岛歌词字体 / 从大到小排序
+}
+
 - (NSInteger)tableView:(UITableView *)table numberOfRowsInSection:(NSInteger)section {
+    if (section == 0) return 1;
     return (NSInteger)_order.count;
 }
 
 - (UIView *)tableView:(UITableView *)table viewForHeaderInSection:(NSInteger)section {
-    return SGSectionHeader(table, @"从大到小");
+    return SGSectionHeader(table, section == 0 ? @"灵动岛歌词" : @"从大到小");
 }
 
 - (CGFloat)tableView:(UITableView *)table heightForHeaderInSection:(NSInteger)section {
@@ -53,6 +59,20 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)path {
+    if (path.section == 0) {
+        UITableViewCell *cell = SGDequeueCell(table, @"island-font");
+        SGFillCell(cell, @"灵动岛歌词字体", nil, nil, @"textformat.size");
+        UISegmentedControl *control = [[UISegmentedControl alloc] initWithItems:@[@"小", @"标准", @"大"]];
+        control.selectedSegmentIndex = SGIslandLyricsFontSize();
+        control.selectedSegmentTintColor = SGGreen();
+        [control setTitleTextAttributes:@{NSForegroundColorAttributeName: UIColor.whiteColor, NSFontAttributeName: SGSubtitleFont()} forState:UIControlStateNormal];
+        control.tag = 100;
+        [control addTarget:self action:@selector(fontSizeChanged:) forControlEvents:UIControlEventValueChanged];
+        [control sizeToFit];
+        cell.accessoryView = control;
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        return cell;
+    }
     UITableViewCell *cell = SGDequeueCell(table, @"text");
     SGRLyricsText text = _order[(NSUInteger)path.row].integerValue;
     NSArray<NSString *> *sizes = @[@"最大", @"较小", @"最小"];
@@ -62,12 +82,16 @@
     return cell;
 }
 
+- (void)fontSizeChanged:(UISegmentedControl *)control {
+    SGSetInt(SGKeyIslandLyricsFontSize, control.selectedSegmentIndex);
+}
+
 - (BOOL)tableView:(UITableView *)table canMoveRowAtIndexPath:(NSIndexPath *)path {
-    return YES;
+    return path.section == 1;
 }
 
 - (BOOL)tableView:(UITableView *)table canEditRowAtIndexPath:(NSIndexPath *)path {
-    return YES;
+    return path.section == 1;
 }
 
 - (UITableViewCellEditingStyle)tableView:(UITableView *)table editingStyleForRowAtIndexPath:(NSIndexPath *)path {
@@ -79,6 +103,7 @@
 }
 
 - (void)tableView:(UITableView *)table moveRowAtIndexPath:(NSIndexPath *)from toIndexPath:(NSIndexPath *)to {
+    if (from.section != 1 || to.section != 1) return;
     NSNumber *text = _order[(NSUInteger)from.row];
     [_order removeObjectAtIndex:(NSUInteger)from.row];
     [_order insertObject:text atIndex:(NSUInteger)to.row];

@@ -213,7 +213,8 @@ static void tick(void) API_AVAILABLE(ios(17.0)) {
                                         tab:tab title:title artist:artist shuffle:shuffle repeatMode:repeatMode
                                    timerEnd:sleepEnd timerEndOfTrack:endOfTrack
                                   lineStart:lineTimed ? @(lineStart) : nil lineDuration:lineTimed ? @(lineDuration) : nil
-                                refreshTime:lineTimed ? @(refreshTime) : nil lineTranslation:translation.length ? translation : nil];
+                                refreshTime:lineTimed ? @(refreshTime) : nil lineTranslation:translation.length ? translation : nil
+                              islandFontSize:@(SGIslandLyricsFontSize())];
     });
 }
 

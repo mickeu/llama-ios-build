@@ -68,8 +68,8 @@ public final class SGLiveActivityBridge: NSObject {
                                   titles: [String], artists: [String], uris: [String],
                                   tab: Int, title: String, artist: String, shuffle: Bool, repeatMode: Int,
                                   timerEnd: Date?, timerEndOfTrack: Bool,
-                                  lineStart: Double?, lineDuration: Double?, refreshTime: Double?,
-                                  lineTranslation: String?) {
+                                  lineStart: NSNumber?, lineDuration: NSNumber?, refreshTime: NSNumber?,
+                                  lineTranslation: String?, islandFontSize: NSNumber?) {
         let tracks = titles.indices.map {
             SGLyricsAttributes.Track(title: titles[$0], artist: artists[$0], uri: uris[$0])
         }
@@ -78,8 +78,8 @@ public final class SGLiveActivityBridge: NSObject {
             line: line, nextLine: nextLine, tracks: tracks,
             tab: SGLyricsAttributes.Tab(rawValue: tab) ?? .controls, title: title, artist: artist,
             shuffle: shuffle, repeatMode: repeatMode, timerEnd: timerEnd, timerEndOfTrack: timerEndOfTrack,
-            lineStart: lineStart, lineDuration: lineDuration, refreshTime: refreshTime,
-            lineTranslation: lineTranslation)
+            lineStart: lineStart?.doubleValue, lineDuration: lineDuration?.doubleValue, refreshTime: refreshTime?.doubleValue,
+            lineTranslation: lineTranslation, islandFontSize: islandFontSize?.intValue)
         let content = ActivityContent(state: state, staleDate: nil)
         if let activity = current {
             queue(.update(activity.id, content))

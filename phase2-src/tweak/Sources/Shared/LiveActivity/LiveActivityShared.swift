@@ -47,6 +47,9 @@ struct SGLyricsAttributes: ActivityAttributes {
         var refreshTime: Double?
         // The line's translation (the lyric source's, in the chosen language), empty or nil when none.
         var lineTranslation: String?
+        // The Dynamic Island lyric's font size tag: 0 small (20pt), 1 standard (21pt), 2 big (22pt).
+        // nil from an older state falls back to standard.
+        var islandFontSize: Int?
     }
 }
 

@@ -22,3 +22,8 @@ NSString *SGLiveActivitySummary(void) {
     NSArray<NSString *> *names = viewNames();
     return index >= 0 && index < (NSInteger)names.count ? names[index] : names.firstObject;
 }
+
+NSInteger SGIslandLyricsFontSize(void) {
+    NSInteger size = SGInt(SGKeyIslandLyricsFontSize, 1);
+    return size >= 0 && size <= 2 ? size : 1;
+}
