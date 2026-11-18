@@ -33,6 +33,9 @@
 static const CGFloat kRowHeight = 56;
 static char kRowKey, kInsetKey;
 
+static BOOL isSettingsList(UICollectionView *list);
+static void swizzleSettingsDataSource(id ds);
+
 static SGModRow *pageRow(NSString *title, NSString *symbol, UIViewController *(^page)(void)) {
     return SGWithSymbol(SGPageRow(title, page), symbol);
 }
