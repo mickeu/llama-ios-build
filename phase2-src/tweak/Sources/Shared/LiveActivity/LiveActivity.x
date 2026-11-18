@@ -8,7 +8,38 @@
 #import "Core/SGCore.h"
 #import "Headers/SPTPlayer.h"
 #import "Shared/Lyrics/Lyrics.h"
+#import "Shared/LyricsSources/LyricsSources.h"
 #import "LiveActivity.h"
+
+// The on-device translator, written in Swift against Apple's Translation framework (LyricsTranslator.swift).
+@interface SGLyricsTranslator : NSObject
++ (void)translate:(NSString *)text to:(NSString *)languageCode completion:(void (^)(NSString *))completion;
+@end
+
+// A line's on-device translation, kept for the process; keyed by track id and line so a seek back
+// does not translate the same line twice.
+static NSMutableDictionary<NSString *, NSString *> *sg_translations;
+static NSMutableSet<NSString *> *sg_translationPending;
+
+static NSString *translatedLine(NSString *trackID, NSString *line, NSString *wanted) {
+    if (!wanted.length || !line.length || [line isEqualToString:@"♪"]) return nil;
+    NSString *key = [NSString stringWithFormat:@"%@\t%@", trackID, line];
+    @synchronized (sg_translations) {
+        NSString *cached = sg_translations[key];
+        if (cached) return cached;
+        if (!sg_translationPending) sg_translationPending = [NSMutableSet set];
+        if (![sg_translationPending containsObject:key]) {
+            [sg_translationPending addObject:key];
+            [SGLyricsTranslator translate:line to:wanted completion:^(NSString *translated) {
+                @synchronized (sg_translations) {
+                    if (translated.length) sg_translations[key] = translated;
+                    [sg_translationPending removeObject:key];
+                }
+            }];
+        }
+    }
+    return nil;
+}
 
 API_AVAILABLE(ios(17.0))
 @interface SGLiveActivityBridge : NSObject
@@ -167,6 +198,12 @@ static void tick(void) API_AVAILABLE(ios(17.0)) {
     NSString *line = @"", *next = @"", *translation = @"";
     NSInteger lineStartMs = -1, lineEndMs = -1;
     if (view == SGLiveActivityLyrics) line = lyricsLine(trackID, &next, &lineStartMs, &lineEndMs, &translation);
+    // A source without the asked-for language falls back to on-device translation, so a lyric in
+    // any language still reads translated; "Any" keeps whatever the source brought, if anything.
+    if (view == SGLiveActivityLyrics && !translation.length) {
+        NSString *translated = translatedLine(trackID, line, SGLyricsTranslationLanguage());
+        if (translated.length) translation = translated;
+    }
 
     NSMutableArray<NSString *> *titles = [NSMutableArray array], *artists = [NSMutableArray array], *uris = [NSMutableArray array];
     if (view != SGLiveActivityLyrics) {
@@ -314,6 +351,7 @@ void SGSetLiveActivityEnabled(BOOL on) {
 
 %ctor {
     if (@available(iOS 17.0, *)) {
+        sg_translations = [NSMutableDictionary dictionary];
         // It was the redesign's alone until it moved to Shared/; whoever had it on keeps it on.
         SGMigrateKey(SGKeyLiveActivityWas, SGKeyLiveActivity);
         SGMigrateKey(SGKeyLiveActivityViewWas, SGKeyLiveActivityView);
