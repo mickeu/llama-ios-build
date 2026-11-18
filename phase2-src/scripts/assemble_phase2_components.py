@@ -38,6 +38,15 @@ with tempfile.TemporaryDirectory() as temp:
     if target.exists():
         shutil.rmtree(target)
     shutil.copytree(appex, target)
+    # 主 App 必须声明 NSSupportsLiveActivities，否则系统无法把 appex 关联回主 App，
+    # 灵动岛点击会跳到同 application-identifier 的其它自签 App（跳"读txt"的根因）。
+    import plistlib as _plistlib
+    _info_path = app / 'Info.plist'
+    with open(_info_path, 'rb') as _f:
+        _info = _plistlib.load(_f)
+    _info['NSSupportsLiveActivities'] = True
+    with open(_info_path, 'wb') as _f:
+        _plistlib.dump(_info, _f)
     staged = root / 'staged.ipa'
     with zipfile.ZipFile(staged, 'w', zipfile.ZIP_DEFLATED) as ipa:
         for path in root.rglob('*'):

@@ -30,7 +30,7 @@ old_dylibs = sorted(n for n in old_names if n.startswith(root + 'Frameworks/') a
 new_dylibs = sorted(n for n in new_names if n.startswith(root + 'Frameworks/') and n.rsplit('/', 1)[-1].startswith('spotifyglass') and n.endswith('.dylib'))
 if len(old_dylibs) != 1 or new_dylibs != old_dylibs:
     raise SystemExit(f"spotifyglass dylib invariant failed: old={old_dylibs}, new={new_dylibs}")
-allowed_prefixes = {old_dylibs[0], root + 'PlugIns/SpotifyGlassLiveActivity.appex/', root + 'Metadata.appintents/'}
+allowed_prefixes = {old_dylibs[0], root + 'PlugIns/SpotifyGlassLiveActivity.appex/', root + 'Metadata.appintents/', root + 'Info.plist'}
 for name in sorted(old_names | new_names):
     if name.endswith('/'):
         continue
@@ -47,6 +47,11 @@ for name in sorted(old_names | new_names):
         raise SystemExit(f"unexpected changed file: {name}")
 info_a = plistlib.loads(original.read(root + 'Info.plist'))
 info_b = plistlib.loads(built.read(root + 'Info.plist'))
+# 只允许新增 NSSupportsLiveActivities=true，其余字段必须与原始一致。
+info_b_without = dict(info_b)
+info_b_without.pop('NSSupportsLiveActivities', None)
+if info_b_without != info_a or info_b.get('NSSupportsLiveActivities') is not True:
+    raise SystemExit("Info.plist changed beyond NSSupportsLiveActivities=true")
 a = info_a.get('CFBundleIcons', {}).get('CFBundleAlternateIcons', {})
 b = info_b.get('CFBundleIcons', {}).get('CFBundleAlternateIcons', {})
 if a != b or len(a) != 34:

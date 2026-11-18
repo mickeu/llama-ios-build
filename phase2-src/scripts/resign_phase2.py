@@ -124,14 +124,49 @@ def main():
     os.path.exists(out) and os.remove(out)
     zsign = shutil.which("zsign")
     if zsign:
-        # 注意：输入必须是「.」（含 Payload 的目录）；传 Payload/X.app 会 Signed OK 但不打包
-        r = subprocess.run([zsign, "-k", P12, "-p", password, "-m", PROFILE,
-                            "-L", "-o", out, "-z", "9", "."],
+        # 4a. zsign 就地签整个 Payload（递归签主 App + 所有 appex）。此刻 appex 的
+        #     application-identifier 会沿用描述文件的 App ID，属错误值。
+        r = subprocess.run([zsign, "-f", "-k", P12, "-p", password, "-m", PROFILE, "-L", "."],
                            cwd=work, capture_output=True, text=True)
-        if r.returncode == 0 and os.path.exists(out):
-            print(f"✅ zsign 签名完成（含 {len(appexes)} 个扩展）")
-        else:
+        if r.returncode != 0:
             sys.exit(f"❌ zsign 签名失败:\n{(r.stdout + r.stderr)[-800:]}")
+
+        # 4b. 为每个 appex 单独重签正确的 application-identifier（team + appex bundle id）。
+        #     否则灵动岛点击会跳到同证书下、bundle=描述文件 App ID 的其它自签 App。
+        raw = subprocess.run(
+            ["openssl", "smime", "-inform", "DER", "-verify", "-noverify", "-in", PROFILE],
+            capture_output=True).stdout
+        prov = plistlib.loads(raw)
+        team = prov["TeamIdentifier"][0]
+        prov_ent = dict(prov["Entitlements"])
+        for appex in appexes:
+            with open(os.path.join(appex, "Info.plist"), "rb") as f:
+                appex_bid = plistlib.load(f)["CFBundleIdentifier"]
+            ent = dict(prov_ent)
+            ent["application-identifier"] = f"{team}.{appex_bid}"
+            ent_path = os.path.join(work, f"ent-{os.path.basename(appex)}.plist")
+            with open(ent_path, "wb") as f:
+                plistlib.dump(ent, f)
+            r2 = subprocess.run([zsign, "-f", "-k", P12, "-p", password, "-m", PROFILE,
+                                 "-e", ent_path, appex],
+                                capture_output=True, text=True)
+            if r2.returncode != 0:
+                sys.exit(f"❌ appex 重签失败 {os.path.basename(appex)}:\n{(r2.stdout + r2.stderr)[-500:]}")
+
+        # 4c. 打包：iSH 内存不足时 DEFLATE 会截断成 147KB（GLOBAL 教训）。
+        #     用 python zipfile + ZIP_STORED（不压缩）+ 1MB 分块流式写，内存占用极低，稳定成功（307MB）。
+        import zipfile as _zipfile
+        with _zipfile.ZipFile(out, "w", _zipfile.ZIP_STORED) as _z:
+            for _root, _dirs, _files in os.walk(os.path.join(work, "Payload")):
+                for _name in _files:
+                    _fp = os.path.join(_root, _name)
+                    _arc = os.path.relpath(_fp, work)
+                    with _z.open(_arc, "w") as _dst, open(_fp, "rb") as _src:
+                        shutil.copyfileobj(_src, _dst, 1024 * 1024)
+        if os.path.exists(out):
+            print(f"✅ zsign 签名完成（含 {len(appexes)} 个扩展，已修正 appex application-identifier）")
+        else:
+            sys.exit("❌ 打包失败")
     else:
         raw = subprocess.run(
             ["openssl", "smime", "-inform", "DER", "-verify", "-noverify", "-in", PROFILE],

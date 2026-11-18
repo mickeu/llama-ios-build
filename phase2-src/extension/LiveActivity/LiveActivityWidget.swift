@@ -59,7 +59,7 @@ struct SGLyricsLiveActivity: Widget {
                 .foregroundStyle(.white)
                 .activityBackgroundTint(Color.black.opacity(0.75))
                 .activitySystemActionForegroundColor(.white)
-                .widgetURL(URL(string: "spotify:"))
+                .widgetURL(URL(string: "spotify://open"))
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.bottom) {
@@ -105,7 +105,7 @@ struct SGLyricsLiveActivity: Widget {
                         .foregroundStyle(green)
                 }
             }
-            .widgetURL(URL(string: "spotify:"))
+            .widgetURL(URL(string: "spotify://open"))
         }
     }
 }
