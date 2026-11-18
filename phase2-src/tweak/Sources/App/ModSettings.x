@@ -255,11 +255,6 @@ static SGModSettingsRow *ensureDrawerRow(UICollectionView *list) {
 %end
 
 // 设置页顶部「节省流量模式 / 私人听歌房」卡片组的隐藏：item 1 是这两个卡片合并的 cell。
-static BOOL isSettingsList(UICollectionView *list) {
-    return [NSStringFromClass(list.class) containsString:@"SettingsListCollectionView"];
-}
-
-// 设置页顶部「节省流量模式 / 私人听歌房」卡片组的隐藏：item 1 是这两个卡片合并的 cell。
 // UICollectionView 的转发方法在 Swift 设置页上不可靠，改为对 dataSource 类做方法替换。
 static BOOL isSettingsList(UICollectionView *list) {
     return [NSStringFromClass(list.class) containsString:@"SettingsListCollectionView"];
