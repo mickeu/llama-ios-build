@@ -80,7 +80,7 @@ public final class SGLiveActivityBridge: NSObject {
             shuffle: shuffle, repeatMode: repeatMode, timerEnd: timerEnd, timerEndOfTrack: timerEndOfTrack,
             lineStart: lineStart?.doubleValue, lineDuration: lineDuration?.doubleValue, refreshTime: refreshTime?.doubleValue,
             lineTranslation: lineTranslation, islandFontSize: islandFontSize?.intValue)
-        let content = ActivityContent(state: state, staleDate: nil)
+        let content = ActivityContent(state: state, staleDate: nil, relevanceScore: 1.0)
         if let activity = current {
             queue(.update(activity.id, content))
             return
