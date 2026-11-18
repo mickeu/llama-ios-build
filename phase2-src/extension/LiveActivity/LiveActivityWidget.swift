@@ -74,12 +74,9 @@ struct SGLyricsLiveActivity: Widget {
                         .foregroundStyle(green)
                         .frame(maxWidth: 44)
                 } else if context.state.view == .lyrics, !context.state.line.isEmpty {
-                    Text(context.state.line)
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(green)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-                        .truncationMode(.tail)
+                    ScrollingLyrics(line: context.state.line, lineStart: context.state.lineStart,
+                                    lineDuration: context.state.lineDuration, refreshTime: context.state.refreshTime,
+                                    size: 21, color: green)
                         .direction(of: context.state.line)
                 } else {
                     Image(systemName: context.state.paused ? "pause.fill" : "waveform")
@@ -91,13 +88,9 @@ struct SGLyricsLiveActivity: Widget {
                         .monospacedDigit()
                         .foregroundStyle(green)
                 } else if context.state.view == .lyrics, !context.state.line.isEmpty {
-                    Text(context.state.line)
-                        .font(.caption2.weight(.semibold))
-                        .foregroundStyle(green)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-                        .truncationMode(.tail)
-                        .direction(of: context.state.line)
+                    ScrollingLyrics(line: context.state.line, lineStart: context.state.lineStart,
+                                    lineDuration: context.state.lineDuration, refreshTime: context.state.refreshTime,
+                                    size: 20, color: green)
                 } else {
                     Image(systemName: "music.note")
                         .foregroundStyle(green)
@@ -105,6 +98,106 @@ struct SGLyricsLiveActivity: Widget {
             }
             .widgetURL(URL(string: "spotify:"))
         }
+    }
+}
+
+// 单行滚动歌词：短则静止，长则从右往左滚动（复刻灵动歌词），左右两侧渐隐。
+// 单行滚动歌词：短则静止，长则从右往左滚动（复刻灵动歌词的 ClockEffect 大半径转动）。
+private struct ScrollingLyrics: View {
+    let line: String
+    let lineStart: Double?
+    let lineDuration: Double?
+    let refreshTime: Double?
+    let size: CGFloat          // 字体 pt
+    let color: Color
+
+    private static let edgePadding: CGFloat = 6
+    private static let fadeWidth: CGFloat = 3
+
+    private var textWidth: CGFloat {
+        (line as NSString).size(withAttributes: [.font: UIFont.systemFont(ofSize: size)]).width
+    }
+    private var textHeight: CGFloat {
+        (line as NSString).size(withAttributes: [.font: UIFont.systemFont(ofSize: size)]).height
+    }
+
+    var body: some View {
+        GeometryReader { proxy in
+            let W = proxy.size.width
+            let C = textWidth
+            let H = textHeight
+            if C + Self.edgePadding * 2 <= W || lineDuration == nil || lineStart == nil {
+                // 静止：文字不超宽，或无时间数据
+                Text(line)
+                    .font(.system(size: size))
+                    .foregroundStyle(color)
+                    .lineLimit(1)
+                    .frame(width: W, alignment: .leading)
+                    .clipped()
+                    .mask(fadeMask(width: W))
+            } else {
+                // 滚动：大半径转动，切向运动近似水平
+                Text(line)
+                    .font(.system(size: size))
+                    .foregroundStyle(color)
+                    .lineLimit(1)
+                    .fixedSize()
+                    .modifier(ClockAnimationModifier(
+                        start: lineStart! - (refreshTime ?? lineStart!),
+                        refreshTime: refreshTime ?? lineStart!,
+                        duration: lineDuration!,
+                        contentWidth: C,
+                        contentHeight: H,
+                        viewWidth: W))
+                    .frame(width: W, alignment: .leading)
+                    .clipped()
+                    .mask(fadeMask(width: W))
+            }
+        }
+        .frame(height: size + 2)
+    }
+
+    private func fadeMask(width: CGFloat) -> some View {
+        HStack(spacing: 0) {
+            LinearGradient(colors: [.clear, .black], startPoint: .leading, endPoint: .trailing)
+                .frame(width: Self.fadeWidth)
+            Color.black
+            LinearGradient(colors: [.black, .clear], startPoint: .leading, endPoint: .trailing)
+                .frame(width: Self.fadeWidth)
+        }
+    }
+}
+
+// 大半径转动近似水平滚动（灵动歌词 ClockAnimationModifier 的几何，逐项复刻）。
+private struct ClockAnimationModifier: ViewModifier {
+    let start: Double          // 加到 refreshTime 相位的时间偏移（秒）
+    let refreshTime: Double    // Unix 秒相位锚点
+    let duration: Double       // 行时长（秒，≤6）
+    let contentWidth: CGFloat  // C
+    let contentHeight: CGFloat // H
+    let viewWidth: CGFloat     // W
+
+    private static let totalDuration: Double = 3600
+
+    func body(content: Content) -> some View {
+        let T = Self.totalDuration
+        // L = C + 20 - W
+        let L = contentWidth + 20 - viewWidth
+        // angleSpan = 360 * duration / T，R = L / (angleSpan * π/180)
+        let angleSpan = 360.0 * duration / T
+        let R = L / (angleSpan * .pi / 180.0)
+        // theta0 = (360*start/T + 360*fmod(refreshTime,T)/T + 180*duration/T) * π/180
+        let thetaDeg = 360.0 * start / T + 360.0 * fmod(refreshTime, T) / T + 180.0 * duration / T
+        let theta = thetaDeg * .pi / 180.0
+
+        return ZStack(alignment: .top) {
+            Color.clear
+            content
+        }
+        .frame(width: 2 * R, height: 2 * R)
+        .rotationEffect(.radians(theta), anchor: .center)
+        .clockHandRotationEffect(period: .custom(-T))
+        .offset(x: 0, y: R - contentHeight / 2)
     }
 }
 
@@ -133,6 +226,12 @@ private struct LyricsView: View {
                 .lineLimit(2)
                 .minimumScaleFactor(0.8)
                 .direction(of: state.line)
+            if let translation = state.lineTranslation, !translation.isEmpty {
+                Text(translation)
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.6))
+                    .lineLimit(1)
+            }
             if !state.nextLine.isEmpty {
                 Text(state.nextLine)
                     .font(.subheadline.weight(.semibold))

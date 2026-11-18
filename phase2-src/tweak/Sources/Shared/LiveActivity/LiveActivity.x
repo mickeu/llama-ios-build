@@ -103,7 +103,7 @@ static NSInteger repeatModeOf(SPTPlayerOptions *options) {
 
 // The line being sung and the one after it; before the first line, between lines and without lyrics
 // at all, a note holds the place.
-static NSString *lyricsLine(NSString *trackID, NSString **next) {
+static NSString *lyricsLine(NSString *trackID, NSString **next, NSInteger *startMs, NSInteger *endMs, NSString **translation) {
     NSArray<SGKaraokeLine *> *lines = SGKaraokeLinesForTrack(trackID);
     if (!lines) {
         SGKaraokeRequestLyrics(trackID);
@@ -120,6 +120,9 @@ static NSString *lyricsLine(NSString *trackID, NSString **next) {
     *next = index + 1 < (NSInteger)lines.count ? SGKaraokeLineText(lines[index + 1]) : @"";
     if (index < 0) return @"♪";
     SGKaraokeLine *current = lines[index];
+    if (startMs) *startMs = current.start;
+    if (endMs) *endMs = current.end;
+    if (translation) *translation = current.translation;
     BOOL nextFarOff = index + 1 == (NSInteger)lines.count || lines[index + 1].start - position > kBreakMs;
     return position > current.end + kBreakMs && nextFarOff ? @"♪" : SGKaraokeLineText(current);
 }
@@ -159,8 +162,9 @@ static void tick(void) API_AVAILABLE(ios(17.0)) {
     BOOL paused = state.isPaused;
     NSTimeInterval every = paused ? kPausedTick : kTick;
     if (sg_timer && sg_tickEvery != every) startTimer(every);
-    NSString *line = @"", *next = @"";
-    if (view == SGLiveActivityLyrics) line = lyricsLine(trackID, &next);
+    NSString *line = @"", *next = @"", *translation = @"";
+    NSInteger lineStartMs = -1, lineEndMs = -1;
+    if (view == SGLiveActivityLyrics) line = lyricsLine(trackID, &next, &lineStartMs, &lineEndMs, &translation);
 
     NSMutableArray<NSString *> *titles = [NSMutableArray array], *artists = [NSMutableArray array], *uris = [NSMutableArray array];
     if (view != SGLiveActivityLyrics) {
@@ -181,14 +185,35 @@ static void tick(void) API_AVAILABLE(ios(17.0)) {
     NSDate *sleepEnd = sg_sleepEnd;
     BOOL endOfTrack = sg_sleepTrack != nil;
 
+    // Lyrics scrolling: the current line's start (absolute Unix seconds), duration, and the sampled
+    // refreshTime (Unix seconds) for phase alignment. Only when the line is really being sung
+    // (not the ♪ break) and its times are known.
+    double lineStart = 0, lineDuration = 0, refreshTime = 0;
+    BOOL lineTimed = NO;
+    if (view == SGLiveActivityLyrics && !paused && lineStartMs >= 0 && lineEndMs > lineStartMs && ![line isEqualToString:@"♪"]) {
+        NSInteger position = SGKaraokePositionMs();
+        if (position >= 0) {
+            double now = NSDate.date.timeIntervalSince1970;
+            lineStart = now + (lineStartMs - position) / 1000.0;
+            lineDuration = MIN((lineEndMs - lineStartMs) / 1000.0, 6.0);
+            refreshTime = now;
+            lineTimed = lineDuration > 0;
+        }
+    }
+
     NSMutableArray<NSString *> *parts = [NSMutableArray arrayWithObjects:@(view).stringValue, paused ? @"1" : @"0", line, next,
         @(tab).stringValue, title, artist, shuffle ? @"1" : @"0", @(repeatMode).stringValue,
-        @((long long)sleepEnd.timeIntervalSince1970).stringValue, endOfTrack ? @"1" : @"0", nil];
+        @((long long)sleepEnd.timeIntervalSince1970).stringValue, endOfTrack ? @"1" : @"0",
+        lineTimed ? [NSString stringWithFormat:@"%.1f", lineStart] : @"", lineTimed ? [NSString stringWithFormat:@"%.1f", lineDuration] : @"",
+        translation,
+        nil];
     for (NSUInteger i = 0; i < titles.count; i++) [parts addObject:[NSString stringWithFormat:@"%@\t%@\t%@", titles[i], artists[i], uris[i]]];
     send([parts componentsJoinedByString:@"\n"], ^{
         [SGLiveActivityBridge showWithView:view paused:paused line:line nextLine:next titles:titles artists:artists uris:uris
                                         tab:tab title:title artist:artist shuffle:shuffle repeatMode:repeatMode
-                                   timerEnd:sleepEnd timerEndOfTrack:endOfTrack];
+                                   timerEnd:sleepEnd timerEndOfTrack:endOfTrack
+                                  lineStart:lineTimed ? @(lineStart) : nil lineDuration:lineTimed ? @(lineDuration) : nil
+                                refreshTime:lineTimed ? @(refreshTime) : nil lineTranslation:translation.length ? translation : nil];
     });
 }
 

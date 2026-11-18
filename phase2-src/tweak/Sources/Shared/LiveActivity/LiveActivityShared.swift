@@ -39,6 +39,14 @@ struct SGLyricsAttributes: ActivityAttributes {
         var repeatMode: Int   // 0 off, 1 the playlist or album, 2 the track
         var timerEnd: Date?   // the sleep timer's end, nil when none is set
         var timerEndOfTrack: Bool
+        // Lyrics scrolling: the line being sung, its start (absolute Unix seconds), duration
+        // (seconds, capped at 6) and the sampled refreshTime (Unix seconds) for phase alignment.
+        // nil when there is no timed line, so the view falls back to static.
+        var lineStart: Double?
+        var lineDuration: Double?
+        var refreshTime: Double?
+        // The line's translation (the lyric source's, in the chosen language), empty or nil when none.
+        var lineTranslation: String?
     }
 }
 
