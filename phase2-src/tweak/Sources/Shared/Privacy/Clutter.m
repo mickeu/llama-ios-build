@@ -6,11 +6,23 @@ static NSString *const socialProofFlags[] = {
     @"ios-feature-search.social_proof_plays_in_search_enabled",
 };
 
+// 数据节省（节流）模式：默认关闭，避免媒体品质被降级。
+static NSString *const dataSaverFlags[] = {
+    @"ios-datasaver-automatic-impl.enabled",
+};
+
 static BOOL forcedOff(NSString *key, BOOL videos, BOOL socialProof) {
     if (videos && [key isEqualToString:@"ios-feature-search.video_carousel_section_enabled"]) return YES;
     if (!socialProof) return NO;
     for (size_t i = 0; i < sizeof(socialProofFlags) / sizeof(socialProofFlags[0]); i++) {
         if ([key isEqualToString:socialProofFlags[i]]) return YES;
+    }
+    return NO;
+}
+
+static BOOL forcedDataSaverOff(NSString *key) {
+    for (size_t i = 0; i < sizeof(dataSaverFlags) / sizeof(dataSaverFlags[0]); i++) {
+        if ([key isEqualToString:dataSaverFlags[i]]) return YES;
     }
     return NO;
 }
@@ -25,9 +37,11 @@ __attribute__((constructor)) static void registerForcer(void) {
             videos = SGHidden(SGKeyHideSearchVideos);
             socialProof = SGHidden(SGKeyHideSocialProof);
         });
+        if (forcedDataSaverOff(key)) return @NO;
         return forcedOff(key, videos, socialProof) ? @NO : nil;
     };
     SGFlagForcer locked = ^id(NSString *key) {
+        if (forcedDataSaverOff(key)) return @NO;
         return forcedOff(key, SGHidden(SGKeyHideSearchVideos), SGHidden(SGKeyHideSocialProof)) ? @NO : nil;
     };
     SGRegisterFlagForcer(NO, atLaunch, locked);

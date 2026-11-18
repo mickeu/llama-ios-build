@@ -211,6 +211,17 @@ static BOOL isSettingsRoot(UIViewController *list) {
     BOOL root = isSettingsRoot((UIViewController *)self);
     for (UIView *sub in ((UIViewController *)self).view.subviews) {
         if (![sub isKindOfClass:UICollectionView.class]) continue;
+        // 只在设置根页隐藏顶部「节省流量/私人听歌房」卡片（item 1），子页不误伤。
+        if (root) {
+            UICollectionView *cv = (UICollectionView *)sub;
+            for (UICollectionViewCell *cell in cv.visibleCells) {
+                NSIndexPath *ip = [cv indexPathForCell:cell];
+                if (ip && ip.section == 0 && ip.item == 1) {
+                    cell.hidden = YES;
+                    cell.alpha = 0;
+                }
+            }
+        }
         SGModSettingsRow *row = objc_getAssociatedObject(sub, &kRowKey);
         // A page that laid itself out before it was on the stack looked like the list for as long
         // as that took; the row goes again as soon as it can be seen for what it is.
@@ -251,31 +262,10 @@ static SGModSettingsRow *ensureDrawerRow(UICollectionView *list) {
 }
 %end
 
-// 设置页顶部「节省流量模式 / 私人听歌房」卡片组的隐藏：item 1 是这两个卡片合并的 cell。
-// 只做视图层 hidden/alpha，不碰 dataSource、不碰 layout attribute。
-static BOOL isSettingsList(UICollectionView *list) {
-    return [NSStringFromClass(list.class) containsString:@"SettingsListCollectionView"];
-}
-
-static BOOL isSettingsCard(NSIndexPath *indexPath) {
-    return indexPath.section == 0 && indexPath.item == 1;
-}
-
 // The lists lay out after their controllers and again whenever their content changes.
 %hook UICollectionView
 - (void)layoutSubviews {
     %orig;
-    // 隐藏设置页顶部「节省流量/私人听歌房」卡片组：只改视图层 hidden/alpha，
-    // 不碰 dataSource、不碰 layout attribute，避免破坏 diffable data source 与布局缓存。
-    if (isSettingsList(self)) {
-        for (UICollectionViewCell *cell in self.visibleCells) {
-            NSIndexPath *ip = [self indexPathForCell:cell];
-            if (ip && isSettingsCard(ip)) {
-                cell.hidden = YES;
-                cell.alpha = 0;
-            }
-        }
-    }
     SGModSettingsRow *row = objc_getAssociatedObject(self, &kRowKey);
     // The drawer sometimes populates its list after its controller's layout callback.
     if (!row && [NSStringFromClass(self.class) containsString:@"SideDrawerListCollectionView"])
