@@ -555,10 +555,6 @@ static void completed(id delegate, NSURLSession *session, NSURLSessionTask *task
 }
 %end
 
-%end
-
-%group SGLyricsEveryTrack
-
 // Spotify's own verdict is noted before it is overridden, for the donor to go by. The getter runs for
 // every track in every list many times a second, so it does a few lookups and nothing more.
 %hook SPTPlayerTrack
@@ -577,6 +573,10 @@ static void completed(id delegate, NSURLSession *session, NSURLSessionTask *task
     return forced;
 }
 %end
+
+%end
+
+%group SGLyricsEveryTrack
 
 %hook NSURLSession
 - (NSURLSessionDataTask *)dataTaskWithRequest:(NSURLRequest *)request {
