@@ -13,6 +13,8 @@
 //   Element_List cells 402x56: 24pt icon at x 12, 13pt white title and 11pt grey subtitle at
 //   x 48, 12pt chevron on the right. A pushed page (trees/settings notifications opened.txt) is a
 //   UITableView bg #121212: header with an 11pt grey description at (16, 24), 53pt cells with the
+#import <fcntl.h>
+#import <unistd.h>
 #import "Core/SGCore.h"
 #import "Settings/SGPage.h"
 #import "Settings/SGPageStyle.h"
@@ -209,6 +211,29 @@ static BOOL isSettingsRoot(UIViewController *list) {
     BOOL root = isSettingsRoot((UIViewController *)self);
     for (UIView *sub in ((UIViewController *)self).view.subviews) {
         if (![sub isKindOfClass:UICollectionView.class]) continue;
+        static BOOL dumped;
+        if (!dumped && root) {
+            dumped = YES;
+            UICollectionView *cv = (UICollectionView *)sub;
+            id ds = cv.dataSource;
+            if (ds) {
+                NSInteger sections = [ds numberOfSectionsInCollectionView:cv];
+                NSString *dir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
+                NSString *path = [dir stringByAppendingPathComponent:@"settings-dump.txt"];
+                int fd = open(path.UTF8String, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+                if (fd >= 0) {
+                    char buf[256];
+                    int n = snprintf(buf, sizeof buf, "settings: %ld sections, cv=%s\n", (long)sections, NSStringFromClass(cv.class).UTF8String);
+                    write(fd, buf, n);
+                    for (NSInteger s = 0; s < sections; s++) {
+                        NSInteger items = [ds collectionView:cv numberOfItemsInSection:s];
+                        n = snprintf(buf, sizeof buf, "  sec %ld: %ld items\n", (long)s, (long)items);
+                        write(fd, buf, n);
+                    }
+                    close(fd);
+                }
+            }
+        }
         SGModSettingsRow *row = objc_getAssociatedObject(sub, &kRowKey);
         // A page that laid itself out before it was on the stack looked like the list for as long
         // as that took; the row goes again as soon as it can be seen for what it is.
