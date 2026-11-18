@@ -145,7 +145,7 @@ static void SGIconPreloadAllPreviews(NSArray<NSString *> *keys, dispatch_block_t
 
 @interface SGAppIconPage : SGPage @end
 @implementation SGAppIconPage { NSArray<NSString *> *_keys; UIView *_footer; NSString *_selectedKey; }
-- (instancetype)init { if (!(self = [super initWithStyle:UITableViewStyleInsetGrouped])) return nil; _keys = SGIcons().keys; _selectedKey = UIApplication.sharedApplication.alternateIconName; self.title = @"切换图标"; _footer = SGNote(@"每次切换后，系统会显示确认提示。选择“恢复默认图标”可恢复 Spotify 原图标。"); return self; }
+- (instancetype)init { if (!(self = [super initWithStyle:UITableViewStyleInsetGrouped])) return nil; _keys = SGIcons().keys; _selectedKey = [NSUserDefaults.standardUserDefaults stringForKey:@"spotifyglass.selectedIcon"] ?: UIApplication.sharedApplication.alternateIconName; self.title = @"切换图标"; _footer = SGNote(@"每次切换后，系统会显示确认提示。选择“恢复默认图标”可恢复 Spotify 原图标。"); return self; }
 - (void)viewDidLoad { [super viewDidLoad]; (void)SGIconPreviewScale(); self.tableView.tableFooterView = _footer; [self SGPreloadPreviews]; }
 - (void)viewWillAppear:(BOOL)animated { [super viewWillAppear:animated]; [self.tableView reloadData]; }
 - (void)viewWillLayoutSubviews { [super viewWillLayoutSubviews]; SGFitNote(self.tableView, _footer, 16, 24); }
@@ -186,6 +186,8 @@ static void SGIconPreloadAllPreviews(NSArray<NSString *> *keys, dispatch_block_t
             return;
         }
         self->_selectedKey = key;
+        if (key) [NSUserDefaults.standardUserDefaults setObject:key forKey:@"spotifyglass.selectedIcon"];
+        else [NSUserDefaults.standardUserDefaults removeObjectForKey:@"spotifyglass.selectedIcon"];
         [self.tableView reloadData];
     }); }];
 }
