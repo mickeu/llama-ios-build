@@ -263,31 +263,19 @@ static BOOL isSettingsCard(NSIndexPath *indexPath) {
 
 // The lists lay out after their controllers and again whenever their content changes.
 // 布局层隐藏：把「节省流量/私人听歌房」卡片组的布局属性压成 0 尺寸，其他项自然上移。
+// 只改 layoutAttributesForElementsInRect（渲染 cell 实际用的方法），不 copy、不设 hidden，
+// 避免破坏 collection view 的布局缓存一致性。
 %hook UICollectionViewLayout
-- (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath {
-    UICollectionViewLayoutAttributes *attr = %orig;
-    if (attr && isSettingsList(self.collectionView) && isSettingsCard(indexPath)) {
-        attr = [attr copy];
-        attr.frame = CGRectZero;
-        attr.size = CGSizeZero;
-        attr.hidden = YES;
-    }
-    return attr;
-}
 - (NSArray<UICollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(CGRect)rect {
     NSArray<UICollectionViewLayoutAttributes *> *attrs = %orig;
     if (!isSettingsList(self.collectionView)) return attrs;
-    NSMutableArray<UICollectionViewLayoutAttributes *> *out = [NSMutableArray array];
     for (UICollectionViewLayoutAttributes *attr in attrs) {
         if (isSettingsCard(attr.indexPath)) {
-            attr = [attr copy];
             attr.frame = CGRectZero;
             attr.size = CGSizeZero;
-            attr.hidden = YES;
         }
-        [out addObject:attr];
     }
-    return out;
+    return attrs;
 }
 %end
 
