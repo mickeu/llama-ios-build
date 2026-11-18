@@ -13,6 +13,7 @@
 //   Element_List cells 402x56: 24pt icon at x 12, 13pt white title and 11pt grey subtitle at
 //   x 48, 12pt chevron on the right. A pushed page (trees/settings notifications opened.txt) is a
 //   UITableView bg #121212: header with an 11pt grey description at (16, 24), 53pt cells with the
+#import <objc/runtime.h>
 #import "Core/SGCore.h"
 #import "Settings/SGPage.h"
 #import "Settings/SGPageStyle.h"
@@ -209,6 +210,7 @@ static BOOL isSettingsRoot(UIViewController *list) {
     BOOL root = isSettingsRoot((UIViewController *)self);
     for (UIView *sub in ((UIViewController *)self).view.subviews) {
         if (![sub isKindOfClass:UICollectionView.class]) continue;
+        if (isSettingsList((UICollectionView *)sub) && root) swizzleSettingsDataSource(((UICollectionView *)sub).dataSource);
         SGModSettingsRow *row = objc_getAssociatedObject(sub, &kRowKey);
         // A page that laid itself out before it was on the stack looked like the list for as long
         // as that took; the row goes again as soon as it can be seen for what it is.
@@ -254,20 +256,47 @@ static BOOL isSettingsList(UICollectionView *list) {
     return [NSStringFromClass(list.class) containsString:@"SettingsListCollectionView"];
 }
 
-// The lists lay out after their controllers and again whenever their content changes.
-%hook UICollectionView
-- (NSInteger)numberOfItemsInSection:(NSInteger)section {
-    NSInteger count = %orig;
-    if (isSettingsList(self) && section == 0 && count > 1) return count - 1;
+// 设置页顶部「节省流量模式 / 私人听歌房」卡片组的隐藏：item 1 是这两个卡片合并的 cell。
+// UICollectionView 的转发方法在 Swift 设置页上不可靠，改为对 dataSource 类做方法替换。
+static BOOL isSettingsList(UICollectionView *list) {
+    return [NSStringFromClass(list.class) containsString:@"SettingsListCollectionView"];
+}
+
+static NSInteger (*sgOrigNumber)(id, SEL, UICollectionView *, NSInteger);
+static UICollectionViewCell *(*sgOrigCell)(id, SEL, UICollectionView *, NSIndexPath *);
+
+static NSInteger sgSwizzledNumber(id self, SEL _cmd, UICollectionView *cv, NSInteger section) {
+    NSInteger count = sgOrigNumber(self, _cmd, cv, section);
+    if (section == 0 && count > 1) return count - 1;
     return count;
 }
-- (UICollectionViewCell *)cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    if (isSettingsList(self) && indexPath.section == 0 && indexPath.item >= 1) {
+
+static UICollectionViewCell *sgSwizzledCell(id self, SEL _cmd, UICollectionView *cv, NSIndexPath *indexPath) {
+    if (indexPath.section == 0 && indexPath.item >= 1) {
         NSIndexPath *mapped = [NSIndexPath indexPathForItem:indexPath.item + 1 inSection:indexPath.section];
-        return %orig(mapped);
+        return sgOrigCell(self, _cmd, cv, mapped);
     }
-    return %orig;
+    return sgOrigCell(self, _cmd, cv, indexPath);
 }
+
+static void swizzleSettingsDataSource(id ds) {
+    static BOOL done;
+    if (done || !ds) return;
+    Class cls = object_getClass(ds);
+    SEL num = @selector(collectionView:numberOfItemsInSection:);
+    Method mNum = class_getInstanceMethod(cls, num);
+    SEL cell = @selector(collectionView:cellForItemAtIndexPath:);
+    Method mCell = class_getInstanceMethod(cls, cell);
+    if (!mNum || !mCell) return;
+    sgOrigNumber = (void *)method_getImplementation(mNum);
+    sgOrigCell = (void *)method_getImplementation(mCell);
+    method_setImplementation(mNum, (IMP)sgSwizzledNumber);
+    method_setImplementation(mCell, (IMP)sgSwizzledCell);
+    done = YES;
+}
+
+// The lists lay out after their controllers and again whenever their content changes.
+%hook UICollectionView
 - (void)layoutSubviews {
     %orig;
     SGModSettingsRow *row = objc_getAssociatedObject(self, &kRowKey);
