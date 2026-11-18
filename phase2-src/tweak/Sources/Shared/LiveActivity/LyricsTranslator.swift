@@ -9,6 +9,7 @@ import Translation
 public final class SGLyricsTranslator: NSObject {
     private static let queue = DispatchQueue(label: "spotifyglass.translation", qos: .userInitiated)
     // One prepared session per target language, kept so the downloaded model stays warm.
+    @available(iOS 18.0, *)
     private static var sessions: [String: TranslationSession] = [:]
     // A small cache so a line replayed after a seek is not translated again.
     private static var cache: [String: String] = [:]
